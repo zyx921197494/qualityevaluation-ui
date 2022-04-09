@@ -6,7 +6,7 @@ export default defineConfig({
   },
   routes: [
     {
-      path: '/home',
+      path: '/',
       component: '@/pages/home/index.tsx',
       exact: true,
       title: 'home',
@@ -65,4 +65,7 @@ export default defineConfig({
     lazyLoad: true,
   },
   mfsu: {},
+  theme: {
+    'primary-color': '#3c8dbc',
+  },
 });
