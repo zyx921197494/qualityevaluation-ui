@@ -11,6 +11,42 @@ export default defineConfig({
       exact: true,
       title: 'home',
     },
+    {
+      path: '/test',
+      component: '@/pages/test/index.tsx',
+      exact: true,
+      title: 'test',
+    },
+    {
+      path: '/login',
+      component: '@/pages/login/index.tsx',
+      exact: true,
+      title: '登录',
+    },
+    {
+      path: '/createAccount',
+      component: '@/pages/createAccount/index.tsx',
+      exact: true,
+      title: '生成账号',
+    },
+    {
+      path: '/exportAccount',
+      component: '@/pages/exportAccount/index.tsx',
+      exact: true,
+      title: '导出账号',
+    },
+    {
+      path: '/resetEvaluation',
+      component: '@/pages/resetEvaluation/index.tsx',
+      exact: true,
+      title: '重启评估',
+    },
+    {
+      path: '/baseData',
+      component: '@/pages/baseData/index.tsx',
+      exact: true,
+      title: '基础数据',
+    },
     // {
     //   path: '/workPlace',
     //   component: '@/pages/work-place/index.tsx',
