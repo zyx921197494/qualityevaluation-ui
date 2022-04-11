@@ -1,5 +1,6 @@
 import React, { Children, useState } from 'react';
 import { Layout, Menu } from 'antd';
+import { history } from 'umi';
 import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
@@ -21,48 +22,48 @@ const { SubMenu } = Menu;
 function layoutWrap(props: any) {
   const menuData = [
     {
-      key: '1',
+      key: '/account',
       icon: <TeamOutlined />,
       title: '评估账号管理',
       children: [
         {
-          key: 's1',
+          key: '/createAccount',
           title: '生成在册园账号',
         },
         {
-          key: 's2',
+          key: '/exportAccount',
           title: '导出与删除账号',
         },
         {
-          key: 's3',
+          key: '/resetEvaluation',
           title: '重启评估',
         },
       ],
     },
     {
-      key: '2',
+      key: '/data',
       icon: <DatabaseOutlined />,
       title: '基础数据',
       children: [
         {
-          key: 's4',
+          key: '/baseData',
           title: '幼儿园信息管理',
         },
       ],
     },
     {
-      key: '3',
+      key: '/evaluation',
       icon: <FileTextFilled />,
       title: '评估数据管理',
       children: [
         {
-          key: 's5',
+          key: '/evaluationData',
           title: '数据管理',
         },
       ],
     },
     {
-      key: '4',
+      key: '/analysis',
       icon: <LineChartOutlined />,
       title: '评估数据检测与分析',
       children: [
@@ -101,47 +102,53 @@ function layoutWrap(props: any) {
       ],
     },
     {
-      key: '5',
+      key: '/report',
       icon: <SnippetsOutlined />,
       title: '区域报告',
       children: [
         {
-          key: 's14',
+          key: '/locationReport',
           title: '区域报告',
         },
       ],
     },
     {
-      key: '6',
+      key: '/system',
       icon: <ApartmentOutlined />,
       title: '系统信息管理',
       children: [
         {
-          key: 's15',
+          key: '/changeUserPassword',
           title: '修改密码',
         },
         {
-          key: 's16',
+          key: '/changeSchoolPassword',
           title: '更换幼儿园密码',
         },
       ],
     },
     {
-      key: '7',
+      key: '/cycle',
       icon: <ScheduleOutlined />,
       title: '周期管理',
       children: [
         {
-          key: 's17',
+          key: '/startCycle',
           title: '允许启动下一周期',
         },
       ],
     },
   ];
   const [collapsed, setcollapsed] = useState(false);
-
+  const { pathname } = history.location;
+  const arr = pathname.split('/');
   const toggle = () => {
     setcollapsed(!collapsed);
+  };
+  const handleClick = (e) => {
+    history.push({
+      pathname: e.keyPath[1] + e.key,
+    });
   };
   return (
     <Layout className={styles.layout}>
@@ -161,7 +168,13 @@ function layoutWrap(props: any) {
             首页
           </div>
         )}
-        <Menu theme="dark" mode="inline">
+        <Menu
+          theme="dark"
+          mode="inline"
+          onClick={handleClick}
+          defaultSelectedKeys={[`/${arr[2]}`]}
+          defaultOpenKeys={[`/${arr[1]}`]}
+        >
           {menuData.map((item: any) => {
             return (
               <SubMenu key={item.key} title={item.title} icon={item.icon}>
