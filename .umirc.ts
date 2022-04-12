@@ -75,7 +75,19 @@ export default defineConfig({
       path: '/cycle/startCycle',
       component: '@/pages/startCycle/index.tsx',
       exact: true,
-      title: '区修改密码',
+      title: '周期管理',
+    },
+    {
+      path: '/user/userHome',
+      component: '@/pages/userHome/index.tsx',
+      exact: true,
+      title: '用户页',
+    },
+    {
+      path: '/user/userEvaluate',
+      component: '@/pages/userEvaluate/index.tsx',
+      exact: true,
+      title: '用户页',
     },
 
     // {
