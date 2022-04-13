@@ -7,8 +7,11 @@ import sideLogo from '@/image/side.png';
 
 import { Form, Input, Button, Checkbox, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import { data } from 'browserslist';
 
-const NormalLoginForm = () => {
+const NormalLoginForm = (props) => {
+  let userType = '';
+
   const onFinish = (values: any) => {
     const key = 'updatable';
     message.loading({ content: 'Loading...', key });
@@ -18,6 +21,12 @@ const NormalLoginForm = () => {
     }).then((res) => {
       if (res.statusCode === 200) {
         message.success({ content: res.message, key });
+        userType = res.data.token_type;
+        if (res.data.token_type == 'user') {
+          history.push('/user/userhome');
+        } else if (res.data.token_type === 'admin') {
+          history.push('/');
+        }
       } else {
         message.error({ content: res.message, key });
       }
