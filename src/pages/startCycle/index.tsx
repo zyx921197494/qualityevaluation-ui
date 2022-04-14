@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import LayoutWrap from '@/components/layoutWrap';
 import styles from './index.less';
-import { Button, Form, Table, Input, Divider } from 'antd';
+import { Button, Form, Table, Input, Divider, Select } from 'antd';
 
 function StartCycle(props) {
   const [selectedRowKeys, setselectedRowKeys] = useState<any>([]);
@@ -15,10 +14,6 @@ function StartCycle(props) {
       dataIndex: 'currentCycle',
     },
   ];
-
-  const onFinish = (values: any) => {
-    console.log('Finish:', values);
-  };
 
   const start = () => {
     //初始化
@@ -46,13 +41,47 @@ function StartCycle(props) {
     });
   }
 
+  const onFinish = (values: any) => {
+    console.log(values);
+  };
+
+  const options = [
+    {
+      key: 1,
+      value: '评价体系1',
+    },
+    {
+      key: 2,
+      value: '评价体系2',
+    },
+  ];
+
   return (
-    <LayoutWrap>
+    <>
       <div>
         <div>
-          <Button className={styles.btn} type="primary" htmlType="submit">
-            允许启动新一周期
-          </Button>
+          <Form
+            className={styles.area}
+            name="startCycleForm"
+            onFinish={onFinish}
+          >
+            <Form.Item name="evaluateIndexId">
+              <Select
+                className={styles.select}
+                allowClear
+                placeholder="选择评价体系"
+                options={options}
+              />
+            </Form.Item>
+
+            <Form.Item>
+              <div>
+                <Button type="primary" htmlType="submit" className={styles.btn}>
+                  允许启动新一周期
+                </Button>
+              </div>
+            </Form.Item>
+          </Form>
         </div>
 
         <Button
@@ -72,7 +101,7 @@ function StartCycle(props) {
           columns={columns}
         />
       </div>
-    </LayoutWrap>
+    </>
   );
 }
 

@@ -5,7 +5,7 @@ import { notification } from 'antd';
 const base_url = 'http://localhost:8080';
 
 const service = axios.create({
-  withCredentials: true, // send cookies when cross-domain requests
+  withCredentials: false, // send cookies when cross-domain requests
   timeout: 100000, // request timeout
 });
 
@@ -59,6 +59,7 @@ const request = (url: string, options: any, data: any) => {
     method: options.method || 'get',
     headers: {
       Accept: '*/*',
+      Authorization: 'Bearer ' + localStorage.getItem('token'),
     },
     data: data || {},
   };

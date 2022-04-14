@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import LayoutWrap from '@/components/layoutWrap';
 import styles from './index.less';
 import { Button, Form, Table, Input, Divider } from 'antd';
 
@@ -61,7 +60,7 @@ function ChangeSchoolPassword(props) {
   }
 
   return (
-    <LayoutWrap>
+    <>
       <div className={styles.area}>
         <Form layout="inline" onFinish={onFinish}>
           <Form.Item name="schoolName">
@@ -118,7 +117,7 @@ function ChangeSchoolPassword(props) {
           columns={columns}
         />
       </div>
-    </LayoutWrap>
+    </>
   );
 }
 

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import LayoutWrap from '@/components/layoutWrap';
 import styles from './index.less';
 import { PageHeader, Button, Divider, Input, Table } from 'antd';
 import {
@@ -108,7 +107,7 @@ function userHome(props) {
     <div>
       <div className="site-page-header-ghost-wrapper">
         <PageHeader
-          title="教育部幼儿园办园行为督导评估系统"
+          title="中小学办学质量在线监测及评估系统"
           extra={[
             <Button shape="round" htmlType="submit" icon={<EditTwoTone />}>
               园所信息

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import LayoutWrap from '@/components/layoutWrap';
 import styles from './index.less';
 import { Button, Select, Form, Table, Upload, Divider } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
@@ -86,7 +85,7 @@ function locationReport(props) {
   const hasSelected = selectedRowKeys.length > 0;
 
   return (
-    <LayoutWrap>
+    <>
       <Divider orientation="left">查询区域报告</Divider>
       <div className={styles.area}>
         <Form layout="inline" onFinish={onFinish}>
@@ -184,7 +183,7 @@ function locationReport(props) {
           columns={columns}
         />
       </div>
-    </LayoutWrap>
+    </>
   );
 }
 

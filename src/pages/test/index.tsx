@@ -1,4 +1,3 @@
-import LayoutWrap from '@/components/layoutWrap';
 import styles from './index.less';
 
 import {

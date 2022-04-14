@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import LayoutWrap from '@/components/layoutWrap';
 import styles from './index.less';
 import {
   Button,
@@ -131,7 +130,7 @@ function evaluationData() {
   const hasSelected = selectedRowKeys.length > 0;
 
   return (
-    <LayoutWrap>
+    <>
       <div className={styles.area}>
         <Form layout="inline" onFinish={onFinish}>
           <Form.Item name="location">
@@ -314,7 +313,7 @@ function evaluationData() {
           columns={columns}
         />
       </div>
-    </LayoutWrap>
+    </>
   );
 }
 

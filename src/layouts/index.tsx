@@ -1,6 +1,6 @@
-import React, { Children, useState } from 'react';
+import React, { useState } from 'react';
 import { Layout, Menu } from 'antd';
-import { history } from 'umi';
+import { withRouter, Switch, history } from 'umi';
 import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
@@ -19,7 +19,7 @@ import styles from './index.less';
 const { Header, Sider, Content } = Layout;
 const { SubMenu } = Menu;
 
-function layoutWrap(props: any) {
+function layoutWrap({ children, location }: any) {
   const menuData = [
     {
       key: '/account',
@@ -196,7 +196,7 @@ function layoutWrap(props: any) {
               onClick: toggle,
             },
           )}
-          <span style={{ fontSize: 22 }}>教育部幼儿园办园行为督导评估系统</span>
+          <span style={{ fontSize: 22 }}>中小学办学质量在线监测及评估系统</span>
           <span>
             <LogoutOutlined style={{ marginRight: 10 }} />
             退出
@@ -210,7 +210,7 @@ function layoutWrap(props: any) {
             minHeight: 280,
           }}
         >
-          {props.children}
+          <Switch location={location}>{children.props.children}</Switch>
         </Content>
       </Layout>
     </Layout>

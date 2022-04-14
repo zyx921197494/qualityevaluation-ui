@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { notification } from 'antd';
 import { history } from 'umi';
 import { login } from '@/api/api';
@@ -9,18 +9,20 @@ import { Form, Input, Button, Checkbox, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { data } from 'browserslist';
 
-const NormalLoginForm = (props) => {
+const NormalLoginForm = (props: any) => {
   let userType = '';
 
   const onFinish = (values: any) => {
     const key = 'updatable';
-    message.loading({ content: 'Loading...', key });
+    message.loading({ content: 'Loading...', key, duration: 0 });
     login({
       username: values.username,
       password: values.password,
-    }).then((res) => {
+    }).then((res: any) => {
       if (res.statusCode === 200) {
         message.success({ content: res.message, key });
+        localStorage.clear();
+        localStorage.setItem('token', res.data.JWT);
         userType = res.data.token_type;
         if (res.data.token_type == 'user') {
           history.push('/user/userhome');

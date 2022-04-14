@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import LayoutWrap from '@/components/layoutWrap';
 import styles from './index.less';
 import {
   Button,
@@ -99,7 +98,7 @@ function BaseData() {
   };
 
   return (
-    <LayoutWrap>
+    <>
       <div className={styles.area}>
         <Form layout="inline" onFinish={onFinish}>
           <Form.Item name="location">
@@ -222,7 +221,7 @@ function BaseData() {
         </Button>
         <Table columns={columns} />
       </div>
-    </LayoutWrap>
+    </>
   );
 }
 
