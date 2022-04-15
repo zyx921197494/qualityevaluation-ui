@@ -236,17 +236,28 @@ function ExportAccount() {
   }
 
   const onFinish = (values: any) => {
+    if (
+      values.locationCode === undefined ||
+      values.locationCode[2] === undefined
+    ) {
+      message.warning('请选择区县');
+      return;
+    }
     const key = 'updatable';
     message.loading({ content: 'Loading...', key, duration: 0 });
-    console.log(values.locationCode);
     schools({
-      keyName: values.keyName == undefined ? '' : values.keyName,
+      keyName: values.keyName === undefined ? '' : values.keyName,
       locationCode:
-        values.locationCode == undefined
+        values.locationCode === undefined
           ? ''
           : values.locationCode[values.locationCode.length - 1],
       current: 1,
       pageSize: 10,
+      schoolCode: '',
+      keyLocation: '',
+      isCity: '',
+      isPublic: '',
+      isGB: '',
     }).then((res: any) => {
       if (res.statusCode === 200) {
         message.success({ content: res.message, key });
@@ -278,8 +289,11 @@ function ExportAccount() {
   const hasSelected = selectedRowKeys.length > 0;
 
   const onclick = (authorityId: number) => {
-    console.log('已选择标识码', selectedRowKeys);
     const key = 'updatable';
+    if (!hasSelected) {
+      message.warning({ content: '请至少选择一所幼儿园', key });
+      return;
+    }
     message.loading({ content: '导出中...', key, duration: 0 });
     exportUser({
       authorityId: authorityId,
@@ -297,7 +311,7 @@ function ExportAccount() {
     <>
       <div className={styles.area}>
         <Form layout="inline" onFinish={onFinish}>
-          <Form.Item name="locationCode">
+          <Form.Item className={styles.selectLong} name="locationCode">
             <Cascader
               className={styles.select}
               options={options}

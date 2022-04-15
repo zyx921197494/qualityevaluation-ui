@@ -10,29 +10,47 @@ import {
   Cascader,
   Tag,
   Divider,
+  message,
 } from 'antd';
+import {
+  region,
+  schoolTask,
+  exportEvaluationData,
+  downloadReport,
+  auditReport,
+} from '@/api/api';
 import { BarChartOutlined, CloudDownloadOutlined } from '@ant-design/icons';
 
 const { Option } = Select;
 
 function evaluationData() {
   const [selectedRowKeys, setselectedRowKeys] = useState<any>([]);
+  const [school, setSchool] = useState([]);
+
   const columns = [
     {
-      title: '标识码',
+      title: 'id',
+      dataIndex: 'taskId',
+    },
+    {
+      title: '学校标识码',
       dataIndex: 'schoolCode',
     },
     {
-      title: '幼儿园名称',
+      title: '学校名称',
       dataIndex: 'schoolName',
     },
     {
       title: '启动时间',
-      dataIndex: 'startTime',
+      dataIndex: 'startDate',
     },
     {
       title: '评估状态',
       dataIndex: 'taskStatus',
+    },
+    {
+      title: '首次数据提交时间',
+      dataIndex: 'firstSubmit',
     },
     {
       title: '最后数据提交时间',
@@ -44,66 +62,7 @@ function evaluationData() {
     },
   ];
 
-  const options = [
-    {
-      value: '重庆市',
-      label: '重庆市',
-      key: 'cq',
-      children: [
-        {
-          value: '主城区',
-          label: '主城区',
-          children: [
-            {
-              value: '南岸区',
-              label: '南岸区',
-              children: [],
-            },
-            {
-              value: '江北区',
-              label: '江北区',
-            },
-          ],
-        },
-      ],
-    },
-    {
-      value: '山西省',
-      label: '山西省',
-      children: [
-        {
-          value: '太原市',
-          label: '太原市',
-          children: [
-            {
-              value: '小店区',
-              label: '小店区',
-            },
-          ],
-        },
-      ],
-    },
-  ];
-
-  function onChange(value) {
-    console.log(`selected ${value}`);
-  }
-
-  function onSearch(val) {
-    console.log('search:', val);
-  }
-
-  function filter(inputValue, path) {
-    return path.some(
-      (option) =>
-        option.label.toLowerCase().indexOf(inputValue.toLowerCase()) > -1,
-    );
-  }
-
-  const onFinish = (values: any) => {
-    console.log('Finish:', values);
-  };
-
+  //table组件
   const start = () => {
     //初始化
     setselectedRowKeys([]);
@@ -111,51 +70,358 @@ function evaluationData() {
 
   const onSelectChange = (value: any) => {
     setselectedRowKeys([...value]);
-    console.log(selectedRowKeys);
   };
 
   const rowSelection = {
     selectedRowKeys,
     onChange: onSelectChange,
   };
-  const data = [];
-  for (let i = 0; i < 20; i++) {
-    data.push({
-      key: i,
-      schoolCode: '000000000' + i,
-      schoolName: '000000000' + i,
-      startTime: '000000000' + i,
-    });
-  }
   const hasSelected = selectedRowKeys.length > 0;
+
+  // 行政区划组件
+  const optionLists = [
+    {
+      value: '110000000000',
+      label: '北京市',
+      isLeaf: false,
+    },
+    {
+      value: '120000000000',
+      label: '天津市',
+      isLeaf: false,
+    },
+    {
+      value: '130000000000',
+      label: '河北省',
+      isLeaf: false,
+    },
+    {
+      value: '140000000000',
+      label: '山西省',
+      isLeaf: false,
+    },
+    {
+      value: '150000000000',
+      label: '内蒙古自治区',
+      isLeaf: false,
+    },
+    {
+      value: '210000000000',
+      label: '辽宁省',
+      isLeaf: false,
+    },
+    {
+      value: '220000000000',
+      label: '吉林省',
+      isLeaf: false,
+    },
+    {
+      value: '230000000000',
+      label: '黑龙江省',
+      isLeaf: false,
+    },
+    {
+      value: '310000000000',
+      label: '上海市',
+      isLeaf: false,
+    },
+    {
+      value: '320000000000',
+      label: '江苏省',
+      isLeaf: false,
+    },
+    {
+      value: '330000000000',
+      label: '浙江省',
+      isLeaf: false,
+    },
+    {
+      value: '340000000000',
+      label: '安徽省',
+      isLeaf: false,
+    },
+    {
+      value: '350000000000',
+      label: '福建省',
+      isLeaf: false,
+    },
+    {
+      value: '360000000000',
+      label: '江西省',
+      isLeaf: false,
+    },
+    {
+      value: '370000000000',
+      label: '山东省',
+      isLeaf: false,
+    },
+    {
+      value: '410000000000',
+      label: '河南省',
+      isLeaf: false,
+    },
+    {
+      value: '420000000000',
+      label: '湖北省',
+      isLeaf: false,
+    },
+    {
+      value: '430000000000',
+      label: '湖南省',
+      isLeaf: false,
+    },
+    {
+      value: '440000000000',
+      label: '广东省',
+      isLeaf: false,
+    },
+    {
+      value: '450000000000',
+      label: '广西壮族自治区',
+      isLeaf: false,
+    },
+    {
+      value: '460000000000',
+      label: '海南省',
+      isLeaf: false,
+    },
+    {
+      value: '500000000000',
+      label: '重庆市',
+      isLeaf: false,
+    },
+    {
+      value: '510000000000',
+      label: '四川省',
+      isLeaf: false,
+    },
+    {
+      value: '520000000000',
+      label: '贵州省',
+      isLeaf: false,
+    },
+    {
+      value: '530000000000',
+      label: '云南省',
+      isLeaf: false,
+    },
+    {
+      value: '540000000000',
+      label: '西藏自治区',
+      isLeaf: false,
+    },
+    {
+      value: '610000000000',
+      label: '陕西省',
+      isLeaf: false,
+    },
+    {
+      value: '620000000000',
+      label: '甘肃省',
+      isLeaf: false,
+    },
+    {
+      value: '630000000000',
+      label: '青海省',
+      isLeaf: false,
+    },
+    {
+      value: '640000000000',
+      label: '宁夏回族自治区',
+      isLeaf: false,
+    },
+    {
+      value: '650000000000',
+      label: '新疆维吾尔自治区',
+      isLeaf: false,
+    },
+  ];
+  const [options, setOptions] = useState(optionLists);
+
+  const loadData = (selectedOptions: string | any[]) => {
+    const targetOption = selectedOptions[selectedOptions.length - 1];
+    targetOption.loading = true;
+
+    region({
+      locationCode: targetOption.value,
+    }).then((res: any) => {
+      if (res.statusCode === 200) {
+        // console.log(res)
+        targetOption.loading = false;
+        const leaf =
+          res.data[0].code.substring(res.data[0].code.length - 8) !==
+          '00000000';
+        targetOption.children = [
+          ...res.data.map((data: any) => {
+            return {
+              label: data.name,
+              value: data.code,
+              isLeaf: leaf,
+            };
+          }),
+        ];
+        setOptions([...options]);
+      } else {
+        message.error({ content: '加载行政区失败' });
+      }
+    });
+  };
+
+  // 提交查询
+  const onFinish = (values: any) => {
+    if (values.taskType === undefined) {
+      message.warning('请选择评估类型');
+      return;
+    }
+    if (values.taskStatus === undefined) {
+      message.warning('请选择评估状态');
+      return;
+    }
+    const key = 'updatable';
+    message.loading({ content: 'Loading...', key, duration: 0 });
+
+    schoolTask({
+      provinceCode:
+        values.locationCode === undefined ? null : values.locationCode[0],
+      cityCode:
+        values.locationCode === undefined ? null : values.locationCode[1],
+      countyCode:
+        values.locationCode === undefined ? null : values.locationCode[2],
+      keyName: values.keyName === undefined ? '' : values.keyName,
+      schoolCode: values.schoolCode === undefined ? '' : values.schoolCode,
+      isCity: values.isCity === undefined ? '' : values.isCity,
+      isPublic: values.isPublic === undefined ? '' : values.isPublic,
+      isGB: values.isGB === undefined ? '' : values.isGB,
+      taskType: values.taskType,
+      taskStatus: values.taskStatus,
+      startDate: values.startDate === undefined ? '' : values.startDate,
+      currentPage: 1,
+      pageSize: 100,
+    }).then((res: any) => {
+      if (res.statusCode === 200) {
+        message.success({ content: res.message, key });
+        for (let item of res.data) {
+          item.key = item.schoolCode;
+          const first = item.firstSubmit.split('T');
+          item.firstSubmit = first[0] + ' ' + first[1];
+          const last = item.lastSubmit.split('T');
+          item.lastSubmit = last[0] + ' ' + last[1];
+        }
+        setSchool(res.data);
+      } else {
+        message.error({ content: res.message, key });
+      }
+    });
+  };
+
+  // 导出评估数据
+  const [type, setType] = useState('');
+  const [status, setStatus] = useState('');
+
+  const onTypeChange = (value: string) => {
+    setType(value);
+  };
+
+  const onStatusChange = (value: string) => {
+    setStatus(value);
+  };
+
+  const exportData = () => {
+    if (status < '3') {
+      message.warning('只能导出评估数据已提交学校的数据');
+      return;
+    }
+    if (!hasSelected) {
+      message.warning('请至少选择一所学校');
+      return;
+    }
+    const key = 'loading';
+    message.loading({ content: '正在导出...', key, duration: 0 });
+    exportEvaluationData({
+      taskType: type,
+      schools: selectedRowKeys,
+    }).then((res: any) => {
+      if (res.statusCode === 200) {
+        message.success({ content: res.message, key });
+      } else {
+        message.error({ content: res.message, key });
+      }
+    });
+  };
+
+  // 下载报告
+  const onDownload = () => {
+    if (status < '4') {
+      message.warning('报告下载仅限于报告已提交的学校');
+      return;
+    }
+    if (!hasSelected) {
+      message.warning('请至少选择一所学校');
+      return;
+    }
+    const key = 'loading';
+    message.loading({ content: '正在下载...', key, duration: 0 });
+    downloadReport({
+      type: type,
+      schoolCodes: selectedRowKeys,
+    }).then((res: any) => {
+      if (res.statusCode === 200) {
+        message.success({ content: res.message, key });
+      } else {
+        message.error({ content: res.message, key });
+      }
+    });
+  };
+
+  // 审核报告
+  const onAudit = (accept: number) => {
+    if (type === '1') {
+      message.warning('自评报告无需审核');
+      return;
+    }
+    if (status != '4' && status != '5') {
+      message.warning('只能审核报告已提交或报告审核未通过的学校');
+      return;
+    }
+    if (!hasSelected) {
+      message.warning('请至少选择一所学校');
+      return;
+    }
+    const key = 'loading';
+    message.loading({ content: 'Loading...', key, duration: 0 });
+    auditReport({
+      type: type,
+      isAccept: accept,
+      schoolCodes: selectedRowKeys,
+    }).then((res: any) => {
+      if (res.statusCode === 200) {
+        message.success({ content: res.message, key });
+      } else {
+        message.error({ content: res.message, key });
+      }
+    });
+  };
 
   return (
     <>
       <div className={styles.area}>
         <Form layout="inline" onFinish={onFinish}>
-          <Form.Item name="location">
+          <Form.Item name="locationCode">
             <Cascader
               className={styles.selectLong}
               options={options}
-              onChange={onChange}
+              loadData={loadData}
               placeholder="省/市/区县"
-              showSearch={{ filter }}
-              onSearch={(value) => console.log(value)}
-              changeOnSelect
+              changeOnSelect={true}
             />
           </Form.Item>
 
           <Form.Item name="isGb">
-            <Select
-              className={styles.select}
-              allowClear
-              placeholder="是否普惠"
-              onChange={onChange}
-            >
-              <Option key="1" value="">
+            <Select className={styles.select} allowClear placeholder="是否普惠">
+              <Option key="1" value="1">
                 是
               </Option>
-              <Option key="0" value="">
+              <Option key="0" value="0">
                 否
               </Option>
             </Select>
@@ -166,28 +432,22 @@ function evaluationData() {
               className={styles.select}
               allowClear
               placeholder="是否城市园"
-              onChange={onChange}
             >
-              <Option key="1" value="">
+              <Option key="1" value="1">
                 是
               </Option>
-              <Option key="0" value="">
+              <Option key="0" value="0">
                 否
               </Option>
             </Select>
           </Form.Item>
 
           <Form.Item name="isPublic">
-            <Select
-              className={styles.select}
-              allowClear
-              placeholder="是否公办"
-              onChange={onChange}
-            >
-              <Option key="1" value="">
+            <Select className={styles.select} allowClear placeholder="是否公办">
+              <Option key="1" value="1">
                 是
               </Option>
-              <Option key="0" value="">
+              <Option key="0" value="0">
                 否
               </Option>
             </Select>
@@ -198,7 +458,7 @@ function evaluationData() {
               className={styles.select}
               allowClear={true}
               placeholder="请选择评估类型"
-              onChange={onChange}
+              onChange={onTypeChange}
             >
               <Option key="1" value="1">
                 自评
@@ -214,7 +474,7 @@ function evaluationData() {
               className={styles.select}
               allowClear={true}
               placeholder="请选择评估状态"
-              onChange={onChange}
+              onChange={onStatusChange}
             >
               <Option key="1" value="1">
                 未启动
@@ -237,7 +497,7 @@ function evaluationData() {
             </Select>
           </Form.Item>
 
-          <Form.Item name="createTime">
+          <Form.Item name="createstartDateTime">
             <DatePicker
               className={styles.select}
               placeholder="评估启动日期"
@@ -245,7 +505,7 @@ function evaluationData() {
             ></DatePicker>
           </Form.Item>
 
-          <Form.Item name="schoolName">
+          <Form.Item name="keyName">
             <Input className={styles.input} placeholder="请输入幼儿园名称" />
           </Form.Item>
 
@@ -273,7 +533,7 @@ function evaluationData() {
               评估数据
             </Tag>
           </Divider>
-          <Button type={'primary'} htmlType="submit">
+          <Button type={'primary'} htmlType="submit" onClick={exportData}>
             导出选中结果
           </Button>
         </div>
@@ -283,13 +543,28 @@ function evaluationData() {
               报告文件
             </Tag>
           </Divider>
-          <Button className={styles.btn} type={'primary'} htmlType="submit">
+          <Button
+            className={styles.btn}
+            type={'primary'}
+            htmlType="submit"
+            onClick={onDownload}
+          >
             下载报告文件
           </Button>
-          <Button className={styles.btn} type={'primary'} htmlType="submit">
+          <Button
+            className={styles.btn}
+            type={'primary'}
+            htmlType="submit"
+            onClick={() => onAudit(1)}
+          >
             审核通过
           </Button>
-          <Button className={styles.btn} type={'primary'} htmlType="submit">
+          <Button
+            className={styles.btn}
+            type={'primary'}
+            htmlType="submit"
+            onClick={() => onAudit(0)}
+          >
             审核不通过
           </Button>
         </div>
@@ -304,13 +579,15 @@ function evaluationData() {
         >
           重置选择
         </Button>
+
         <span style={{ marginLeft: 10 }}>
           {hasSelected ? `已选 ${selectedRowKeys.length} 条` : ''}
         </span>
+
         <Table
-          dataSource={data}
-          rowSelection={rowSelection}
           columns={columns}
+          dataSource={school}
+          rowSelection={rowSelection}
         />
       </div>
     </>
