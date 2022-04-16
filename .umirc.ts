@@ -64,8 +64,8 @@ export default defineConfig({
           title: '区域报告',
         },
         {
-          path: '/system/changeUserPassword',
-          component: '@/pages/changeUserPassword/index.tsx',
+          path: '/system/ChangeAdminPassword',
+          component: '@/pages/ChangeAdminPassword/index.tsx',
           exact: true,
           title: '修改用户密码',
         },

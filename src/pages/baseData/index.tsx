@@ -30,7 +30,6 @@ function BaseData() {
 
   const onSelectChange = (value: any) => {
     setselectedRowKeys([...value]);
-    console.log(selectedRowKeys);
   };
 
   const rowSelection = {

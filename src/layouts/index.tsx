@@ -118,7 +118,7 @@ function layoutWrap({ children, location }: any) {
       title: '系统信息管理',
       children: [
         {
-          key: '/changeUserPassword',
+          key: '/ChangeAdminPassword',
           title: '修改密码',
         },
         {

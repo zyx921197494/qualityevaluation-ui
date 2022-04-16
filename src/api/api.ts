@@ -101,18 +101,75 @@ export async function auditReport(params: any) {
   );
 }
 
-export async function register(params: any) {
-  return request('/register', { method: 'post' }, params);
-}
-
-export async function updatePersonData(params: any) {
-  return request('/person/updatePersonData', { method: 'post' }, params);
-}
-
-export async function getPersonData(params: any) {
+// 管理员查看本区域内各年份区域报告
+export async function listLocationReport(params: any) {
   return request(
-    `/person/getPersonData?id=${params.id}`,
+    `/admin/listLocationReport?year=${params.year}`,
     { method: 'get' },
     {},
+  );
+}
+
+// 管理员上传本地区某一年的区域报告
+export async function uploadLocationReport(params: any) {
+  return request(
+    `/admin/uploadLocationReport?year=${params.year}&file=${params.file}`,
+    { method: 'get' },
+    {},
+  );
+}
+
+// 管理员根据区域报告id批量下载报告
+export async function downloadLocationReport(params: any) {
+  return request(
+    `/admin/downloadLocationReport`,
+    { method: 'post' },
+    params.ids,
+  );
+}
+
+// 管理员根据区域报告id批量删除报告
+export async function deleteLocationReport(params: any) {
+  return request(`/admin/deleteLocationReport`, { method: 'post' }, params.ids);
+}
+
+// 管理员修改密码
+export async function changeAdminPassword(params: any) {
+  return request(
+    `/admin/changeAdminPassword`,
+    { method: 'post' },
+    params.newPwd,
+  );
+}
+
+// 管理员修改学校评估密码
+export async function changeUserPassword(params: any) {
+  return request(
+    `/admin/changeUserPassword?authorityId=${params.authorityId}`,
+    { method: 'post' },
+    params.schoolCodes,
+  );
+}
+
+// 根据行政区码获取下属各县的当前周期
+export async function getCycle(params: any) {
+  return request(
+    `/admin/getCycle?locationCode=${params.locationCode}`,
+    { method: 'get' },
+    {},
+  );
+}
+
+// 获取所有评价体系
+export async function getIndex() {
+  return request(`/admin/getIndex`, { method: 'get' }, {});
+}
+
+// 开启新一周期
+export async function startCycle(params: any) {
+  return request(
+    `/admin/startCycle?evaluateIndexId=${params.evaluateIndexId}`,
+    { method: 'post' },
+    params.locationCodes,
   );
 }
