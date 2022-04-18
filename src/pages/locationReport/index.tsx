@@ -11,7 +11,7 @@ import { UploadOutlined } from '@ant-design/icons';
 
 const { Option } = Select;
 
-function locationReport(props) {
+function locationReport(props: any) {
   const columns = [
     {
       title: '报告ID',
@@ -56,7 +56,7 @@ function locationReport(props) {
         }
         setReport(res.data);
       } else {
-        message.error({ content: '加载行政区失败' });
+        message.error({ content: res.message, key });
       }
     });
   };

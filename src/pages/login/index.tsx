@@ -23,11 +23,12 @@ const NormalLoginForm = (props: any) => {
         message.success({ content: res.message, key });
         localStorage.clear();
         localStorage.setItem('token', res.data.JWT);
+        localStorage.setItem('token_type', res.data.token_type);
         userType = res.data.token_type;
-        if (res.data.token_type == 'user') {
-          history.push('/user/userhome');
-        } else if (res.data.token_type === 'admin') {
+        if (res.data.token_type === 'admin') {
           history.push('/');
+        } else {
+          history.push('/user/userhome');
         }
       } else {
         message.error({ content: res.message, key });

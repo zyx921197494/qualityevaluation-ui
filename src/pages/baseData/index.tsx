@@ -385,6 +385,7 @@ function BaseData() {
         footer={null}
         style={{ width: 500, height: 800 }}
         centered={true}
+        closable={false}
       >
         <Form
           preserve={false}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './index.less';
 import {
   Button,
@@ -261,11 +261,8 @@ function StartCycle(props: any) {
 
   // 评价体系查询
   const [EvaluateIndex, setEvaluateIndex] = useState([]);
-  const [Loading, setLoading] = useState(false);
-  const onFocus = () => {
-    setLoading(true);
+  useEffect(() => {
     getIndex().then((res: any) => {
-      setLoading(false);
       if (res.statusCode === 200) {
         for (let item of res.data) {
           item.key = item.evaluateId;
@@ -277,7 +274,7 @@ function StartCycle(props: any) {
         message.error({ content: '加载评价体系失败' });
       }
     });
-  };
+  }, []);
 
   // 开启新一周期
   const onStartCycle = () => {
@@ -312,8 +309,6 @@ function StartCycle(props: any) {
               <Select
                 className={styles.select}
                 placeholder="选择评价体系"
-                loading={Loading}
-                onFocus={onFocus}
                 notFoundContent={null}
                 options={EvaluateIndex}
               />

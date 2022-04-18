@@ -11,6 +11,11 @@ import {
   Tag,
   Divider,
   message,
+  Space,
+  Modal,
+  Checkbox,
+  Radio,
+  BackTop,
 } from 'antd';
 import {
   region,
@@ -19,7 +24,11 @@ import {
   downloadReport,
   auditReport,
 } from '@/api/api';
-import { BarChartOutlined, CloudDownloadOutlined } from '@ant-design/icons';
+import {
+  BarChartOutlined,
+  CloudDownloadOutlined,
+  SnippetsTwoTone,
+} from '@ant-design/icons';
 
 const { Option } = Select;
 
@@ -59,8 +68,32 @@ function evaluationData() {
     {
       title: '操作',
       dataIndex: 'option',
+      render: (text: any, records: any) => (
+        <Space size="middle">
+          <Button
+            icon={<SnippetsTwoTone />}
+            type="link"
+            onClick={() => showModal(records.submits)}
+          >
+            查看数据
+          </Button>
+        </Space>
+      ),
     },
   ];
+
+  // 查看任务已提交数据组件
+  const [Visible, setVisible] = useState(false);
+  const [Current, setCurrent] = useState([]);
+  const showModal = (value: React.SetStateAction<never[]>) => {
+    console.log(value);
+    setVisible(true);
+    setCurrent(value);
+  };
+
+  const handleCancel = () => {
+    setVisible(false);
+  };
 
   //table组件
   const start = () => {
@@ -404,6 +437,115 @@ function evaluationData() {
 
   return (
     <>
+      <Modal
+        destroyOnClose={true}
+        title="查看评估数据"
+        visible={Visible}
+        footer={null}
+        width={800}
+        closable={false}
+      >
+        <Form.Item className={styles.save}>
+          <Button onClick={handleCancel}>关闭</Button>
+        </Form.Item>
+        <Form preserve={false}>
+          {Current.map((data, index) => {
+            return (
+              <div key={index}>
+                <div className={styles.question}>
+                  <Form.Item>
+                    <p>
+                      {index + 1}、{data.index3Name} ______ 。
+                      {data.memo == undefined ? '' : '(' + data.memo + ')'}
+                    </p>
+                  </Form.Item>
+                  <Form.Item
+                    // name={'id' + '_' + data.key}
+                    className={styles.questionArea}
+                  >
+                    {data.type == '3' ? (
+                      <Checkbox.Group
+                        disabled={true}
+                        defaultValue={
+                          data.content == undefined
+                            ? []
+                            : data.content.split('')
+                        }
+                        options={[
+                          {
+                            label: data.index3Content.split('|')[0],
+                            value: 'A',
+                          },
+                          {
+                            label: data.index3Content.split('|')[1],
+                            value: 'B',
+                          },
+                          {
+                            label: data.index3Content.split('|')[2],
+                            value: 'C',
+                          },
+                          {
+                            label: data.index3Content.split('|')[3],
+                            value: 'D',
+                          },
+                        ]}
+                      />
+                    ) : data.type == '2' ? (
+                      <Radio.Group
+                        disabled={true}
+                        defaultValue={
+                          data.content == undefined ? [] : data.content
+                        }
+                        options={[
+                          {
+                            label: data.index3Content.split('|')[0],
+                            value: 'A',
+                          },
+                          {
+                            label: data.index3Content.split('|')[1],
+                            value: 'B',
+                          },
+                          {
+                            label: data.index3Content.split('|')[2],
+                            value: 'C',
+                          },
+                          {
+                            label: data.index3Content.split('|')[3],
+                            value: 'D',
+                          },
+                        ]}
+                      />
+                    ) : (
+                      <Radio.Group
+                        disabled={true}
+                        options={[
+                          {
+                            label: data.index3Content.split('|')[0],
+                            value: 'A',
+                          },
+                          {
+                            label: data.index3Content.split('|')[1],
+                            value: 'B',
+                          },
+                        ]}
+                        defaultValue={
+                          data.content == undefined ? [] : data.content
+                        }
+                      />
+                    )}
+                  </Form.Item>
+                </div>
+                <Divider />
+              </div>
+            );
+          })}
+          <Form.Item className={styles.save}>
+            <Button onClick={handleCancel}>关闭</Button>
+          </Form.Item>
+          <Divider />
+        </Form>
+      </Modal>
+
       <div className={styles.area}>
         <Form layout="inline" onFinish={onFinish}>
           <Form.Item name="locationCode">

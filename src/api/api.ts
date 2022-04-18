@@ -1,4 +1,5 @@
 import request from '../utils/request';
+import fileRequest from '../utils/fileRequest';
 
 //登录
 export async function login(params: any) {
@@ -7,7 +8,11 @@ export async function login(params: any) {
 
 //生成在册园账号
 export async function createRegisterUsers(params: any) {
-  return request('/admin/createRegisterUsers', { method: 'post' }, params);
+  return fileRequest(
+    '/admin/createRegisterUsers',
+    { method: 'post' },
+    params.file,
+  );
 }
 
 // 查找幼儿园
@@ -171,5 +176,121 @@ export async function startCycle(params: any) {
     `/admin/startCycle?evaluateIndexId=${params.evaluateIndexId}`,
     { method: 'post' },
     params.locationCodes,
+  );
+}
+
+// 查找任务周期
+export async function getTaskTime() {
+  return request(`/evaluate/common/getTaskTime`, { method: 'get' }, {});
+}
+
+// 评估人员修改用户信息
+export async function getCurrentUser() {
+  return request(`/evaluate/common/getCurrentUser`, { method: 'get' }, {});
+}
+
+// 修改人员修改用户信息
+export async function updateUserInfo(params: any) {
+  return request(
+    `/evaluate/common/updateUserInfo`,
+    { method: 'post' },
+    params.userVo,
+  );
+}
+
+// 查询学校信息
+export async function getSchoolInfo() {
+  return request(`/evaluate/common/getSchoolInfo`, { method: 'get' }, {});
+}
+
+// // 获取当前用户的类型
+// export async function currentRole() {
+//   return request(
+//     `/universal/currentRole`,
+//     { method: 'get' },
+//     {},
+//   );
+// }
+
+// 园长是否是第一次登录
+export async function isFirstLogin() {
+  return request(`/evaluate/self/isFirstLogin`, { method: 'get' }, {});
+}
+
+// 园长启动自评
+export async function startEvaluation() {
+  return request(`/evaluate/self/startEvaluation`, { method: 'get' }, {});
+}
+
+// 查询已提交的自评数据
+export async function getSubmittedEvaluation() {
+  return request(
+    `/evaluate/self/getSubmittedEvaluation`,
+    { method: 'get' },
+    {},
+  );
+}
+
+// 提交自评数据
+export async function submitEvaluation(params: any) {
+  return request(
+    `/evaluate/self/submitEvaluation`,
+    { method: 'post' },
+    params.submitVos,
+  );
+}
+
+// 提交自评证据
+export async function uploadEvidence(params: any) {
+  return request(
+    `/evaluate/self/uploadEvidence`,
+    { method: 'post' },
+    params.file,
+  );
+}
+
+// 发送邮箱验证码
+export async function sendEmail(params: any) {
+  return request(
+    `/evaluate/common/sendEmail?email=${params.email}`,
+    { method: 'get' },
+    {},
+  );
+}
+
+// 完成自评
+export async function finishEvaluation(params: any) {
+  return request(
+    `/evaluate/self/finishEvaluation?email=${params.email}&code=${params.code}`,
+    { method: 'get' },
+    {},
+  );
+}
+
+// 导出自评数据
+export async function exportSelfEvaluation(params: any) {
+  return request(`/evaluate/self/exportEvaluation`, { method: 'get' }, {});
+}
+
+// 导出自评证据
+export async function exportEvidence(params: any) {
+  return request(`/evaluate/self/exportEvidence`, { method: 'get' }, {});
+}
+
+// 上传自评报告
+export async function uploadSelfReport(params: any) {
+  return request(
+    `/evaluate/self/uploadSelfReport`,
+    { method: 'post' },
+    params.file,
+  );
+}
+
+// 下载督评/复评报告
+export async function downloadSelfReport(params: any) {
+  return request(
+    `/evaluate/self/downloadReport?type=${params.type}`,
+    { method: 'get' },
+    {},
   );
 }

@@ -6,6 +6,24 @@ export default defineConfig({
   },
   routes: [
     {
+      path: '/login',
+      component: '@/pages/login/index.tsx',
+      exact: true,
+      title: '登录',
+    },
+    {
+      path: '/user/userHome',
+      component: '@/pages/userHome/index.tsx',
+      exact: true,
+      title: '用户页',
+    },
+    {
+      path: '/user/userEvaluate',
+      component: '@/pages/userEvaluate/index.tsx',
+      exact: true,
+      title: '用户页',
+    },
+    {
       path: '/',
       component: '@/layouts/index',
       routes: [
@@ -20,12 +38,6 @@ export default defineConfig({
           component: '@/pages/test/index.tsx',
           exact: true,
           title: 'test',
-        },
-        {
-          path: '/login',
-          component: '@/pages/login/index.tsx',
-          exact: true,
-          title: '登录',
         },
         {
           path: '/account/createAccount',
@@ -82,16 +94,10 @@ export default defineConfig({
           title: '周期管理',
         },
         {
-          path: '/user/userHome',
-          component: '@/pages/userHome/index.tsx',
+          path: '/analysis/finishSituation',
+          component: '@/pages/analysis/finishSituation/index.tsx',
           exact: true,
-          title: '用户页',
-        },
-        {
-          path: '/user/userEvaluate',
-          component: '@/pages/userEvaluate/index.tsx',
-          exact: true,
-          title: '用户页',
+          title: '年度完成情况',
         },
       ],
     },

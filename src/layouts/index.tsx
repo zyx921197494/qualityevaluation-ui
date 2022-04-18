@@ -68,7 +68,7 @@ function layoutWrap({ children, location }: any) {
       title: '评估数据检测与分析',
       children: [
         {
-          key: 's6',
+          key: '/finishSituation',
           title: '年度完成情况',
         },
         {
