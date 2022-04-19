@@ -72,32 +72,16 @@ function layoutWrap({ children, location }: any) {
           title: '年度完成情况',
         },
         {
-          key: 's7',
-          title: '各省/各市/各区县评估进度',
-        },
-        {
-          key: 's8',
+          key: '/evaluateProcess',
           title: '区县评估进度查询',
         },
         {
-          key: 's9',
-          title: '各省/各市/各区得分',
+          key: '/schoolScore',
+          title: '学校得分情况',
         },
         {
-          key: 's10',
-          title: '区县幼儿园得分',
-        },
-        {
-          key: 's11',
-          title: '城市园和农村园得分',
-        },
-        {
-          key: 's12',
-          title: '公办园和民办园得分',
-        },
-        {
-          key: 's13',
-          title: '普惠园和非普惠园得分',
+          key: '/schoolScoreBySort',
+          title: '分类查询得分',
         },
       ],
     },

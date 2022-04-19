@@ -2,12 +2,38 @@ import React, { useEffect, useState } from 'react';
 import { history } from 'umi';
 import styles from './index.less';
 
-import { message, Button, Cascader, Form, Divider, Tag } from 'antd';
-import { evaluateCountyProcess, region, getCountyScore } from '@/api/api';
-import { Pie, Column } from '@ant-design/plots';
+import { message, Button, Cascader, Form, Divider, Select, Table } from 'antd';
+import { region, getScoreBySort } from '@/api/api';
+import { Column } from '@ant-design/plots';
 
-function evaluateProcess(props: any) {
-  // 级联组件
+function schoolScoreBySort(props: any) {
+  // 查询组件
+  const typeList = [
+    {
+      label: '自评',
+      value: 1,
+    },
+    {
+      label: '督评',
+      value: 2,
+    },
+  ];
+
+  const sortList = [
+    {
+      label: '城市/农村学校',
+      value: 1,
+    },
+    {
+      label: '公办/民办学校',
+      value: 2,
+    },
+    {
+      label: '普惠/非普惠学校',
+      value: 3,
+    },
+  ];
+
   const optionLists = [
     {
       value: '110000000000',
@@ -167,9 +193,6 @@ function evaluateProcess(props: any) {
   ];
 
   const [options, setOptions] = useState(optionLists);
-  const onListChange = (value: any, selectedOptions: any) => {
-    // console.log("onListChange", selectedOptions[selectedOptions.length - 1]);
-  };
 
   const loadData = (selectedOptions: string | any[]) => {
     const targetOption = selectedOptions[selectedOptions.length - 1];
@@ -199,166 +222,70 @@ function evaluateProcess(props: any) {
     });
   };
 
-  // 图表配置
-  const [Self, setSelf] = useState([]);
-  const [Sup, setSup] = useState([]);
-  const [Score, setScore] = useState([]);
-  const [Avg, setAvg] = useState({});
-
-  const selfConfig = {
-    appendPadding: 10,
-    data: Self,
-    angleField: 'y',
-    colorField: 'x',
-    radius: 1,
-    innerRadius: 0.6,
-    label: {
-      type: 'inner',
-      offset: '-50%',
-      content: '{value}',
-      style: {
-        textAlign: 'center',
-        fontSize: 14,
-      },
-    },
-    interactions: [
-      {
-        type: 'element-selected',
-      },
-      {
-        type: 'element-active',
-      },
-    ],
-    statistic: {
-      title: false,
-      content: {
-        style: {
-          whiteSpace: 'pre-wrap',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-        },
-        // content: 'AntV\nG2Plot',
-      },
-    },
-    legend: {
-      layout: 'horizontal',
-      position: 'top-left',
-    },
-    tooltip: {
-      fields: ['x', 'y'],
-      position: 'top',
-      formatter: (datum: Datum) => {
-        return { name: datum.x, value: datum.y + ' 所' };
-      },
-    },
-  };
-
-  const supConfig = {
-    appendPadding: 10,
-    data: Sup,
-    angleField: 'y',
-    colorField: 'x',
-    radius: 1,
-    innerRadius: 0.6,
-    label: {
-      type: 'inner',
-      offset: '-50%',
-      content: '{value}',
-      style: {
-        textAlign: 'center',
-        fontSize: 14,
-      },
-    },
-    interactions: [
-      {
-        type: 'element-selected',
-      },
-      {
-        type: 'element-active',
-      },
-    ],
-    statistic: {
-      title: false,
-      content: {
-        style: {
-          whiteSpace: 'pre-wrap',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-        },
-        // content: 'AntV\nG2Plot',
-      },
-    },
-    legend: {
-      layout: 'horizontal',
-      position: 'top-left',
-    },
-    tooltip: {
-      fields: ['x', 'y'],
-      position: 'top',
-      formatter: (datum: Datum) => {
-        return { name: datum.x, value: datum.y + ' 所' };
-      },
-    },
-  };
-
-  const columnConfig = {
-    data: Score,
-    xField: 'x',
-    yField: 'z',
-    color: '#87D068',
-    label: {
-      position: 'middle',
-      style: {
-        fill: '#FFFFFF',
-        opacity: 0.6,
-      },
-    },
-    xAxis: {
-      label: {
-        autoHide: true,
-        autoRotate: false,
-      },
-      title: {
-        text: '各评估指标平均得分',
-        position: 'center',
-        offset: 50,
-      },
-    },
-    meta: {
-      x: {
-        alias: '指标',
-      },
-      z: {
-        alias: '得分',
-      },
-    },
-  };
-
   const onFinish = (values: any) => {
-    if (values.countyCode === undefined || values.countyCode[2] === undefined) {
+    if (values.countyCode === undefined) {
       message.warning('请选择区县');
       return;
     }
-    evaluateCountyProcess({
-      countyCode: values.countyCode[2],
+    if (values.taskType === undefined) {
+      message.warning('请选择任务类型');
+      return;
+    }
+    getScoreBySort({
+      scoreDTO: {
+        locationCode: values.countyCode[values.countyCode.length - 1],
+        taskType: values.taskType,
+        isCity: values.sort === 1 ? 1 : null,
+        isPublic: values.sort === 2 ? 1 : null,
+        isGb: values.sort === 3 ? 1 : null,
+      },
     }).then((res: any) => {
       if (res.statusCode === 200) {
-        setSelf(res.data.self);
-        setSup(res.data.sup);
+        for (let item of res.data) {
+          if (values.sort === 1) {
+            item.name = item.name === 'index1' ? '城市学校' : '农村学校';
+          } else if (values.sort === 2) {
+            item.name = item.name === 'index1' ? '公办学校' : '民办学校';
+          } else {
+            item.name = item.name === 'index1' ? '普惠性学校' : '非普惠性学校';
+          }
+        }
+        setData(res.data);
       } else {
         message.error({ content: res.message });
       }
     });
-    getCountyScore({
-      countyCode: values.countyCode[2],
-    }).then((res: any) => {
-      if (res.statusCode === 200) {
-        setScore(res.data.score);
-        setAvg(res.data.avg);
-      } else {
-        message.error({ content: res.message });
-      }
-    });
+  };
+
+  // 图表
+  const [Data, setData] = useState([]);
+
+  const config = {
+    data: Data,
+    isGroup: true,
+    xField: 'x',
+    yField: 'z',
+    seriesField: 'name',
+    marginRatio: 0.1,
+    label: {
+      position: 'top',
+      layout: [
+        {
+          type: 'interval-adjust-position',
+        },
+        {
+          type: 'interval-hide-overlap',
+        },
+        {
+          type: 'adjust-color',
+        },
+      ],
+    },
+    tooltip: {
+      formatter: (datum: Datum) => {
+        return { name: datum.x, value: datum.z + '分' };
+      },
+    },
   };
 
   return (
@@ -370,10 +297,15 @@ function evaluateProcess(props: any) {
               className={styles.selectLong}
               options={options}
               loadData={loadData}
-              onChange={onListChange}
               placeholder="省/市/区县"
               changeOnSelect={true}
             />
+          </Form.Item>
+          <Form.Item className={styles.select} name="taskType">
+            <Select options={typeList} placeholder="选择评估任务"></Select>
+          </Form.Item>
+          <Form.Item className={styles.select} name="sort">
+            <Select options={sortList} placeholder="选择分类"></Select>
           </Form.Item>
           <Form.Item>
             <Button className={styles.btn} type={'primary'} htmlType="submit">
@@ -382,27 +314,12 @@ function evaluateProcess(props: any) {
           </Form.Item>
         </Form>
       </div>
-
-      <Divider>
-        <Tag color="magenta">评估完成情况</Tag>
-      </Divider>
-
-      <div className={styles.area}>
-        <div className={styles.pic}>
-          <Pie {...selfConfig} />
-        </div>
-        <div className={styles.pic}>
-          <Pie {...supConfig} />
-        </div>
-      </div>
-      <Divider>
-        <Tag color="magenta">指标评分得分</Tag>
-      </Divider>
-      <div className={styles.column}>
-        <Column {...columnConfig} />
+      <Divider />
+      <div>
+        <Column {...config} />
       </div>
     </>
   );
 }
 
-export default evaluateProcess;
+export default schoolScoreBySort;

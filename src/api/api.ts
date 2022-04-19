@@ -203,15 +203,21 @@ export async function getSchoolInfo() {
   return request(`/evaluate/common/getSchoolInfo`, { method: 'get' }, {});
 }
 
-// // 获取当前用户的类型
-// export async function currentRole() {
-//   return request(
-//     `/universal/currentRole`,
-//     { method: 'get' },
-//     {},
-//   );
-// }
+// 获取当前用户的类型
+export async function currentRole() {
+  return request(`/universal/currentRole`, { method: 'get' }, {});
+}
 
+// 发送邮箱验证码
+export async function sendEmail(params: any) {
+  return request(
+    `/evaluate/common/sendEmail?email=${params.email}`,
+    { method: 'get' },
+    {},
+  );
+}
+
+// ————————————————————————————自评模块——————————————————————————————————
 // 园长是否是第一次登录
 export async function isFirstLogin() {
   return request(`/evaluate/self/isFirstLogin`, { method: 'get' }, {});
@@ -220,6 +226,11 @@ export async function isFirstLogin() {
 // 园长启动自评
 export async function startEvaluation() {
   return request(`/evaluate/self/startEvaluation`, { method: 'get' }, {});
+}
+
+// 查询自评完成情况
+export async function getCompleteIndex() {
+  return request(`/evaluate/self/getCompleteIndex`, { method: 'get' }, {});
 }
 
 // 查询已提交的自评数据
@@ -246,15 +257,6 @@ export async function uploadEvidence(params: any) {
     `/evaluate/self/uploadEvidence`,
     { method: 'post' },
     params.file,
-  );
-}
-
-// 发送邮箱验证码
-export async function sendEmail(params: any) {
-  return request(
-    `/evaluate/common/sendEmail?email=${params.email}`,
-    { method: 'get' },
-    {},
   );
 }
 
@@ -292,5 +294,117 @@ export async function downloadSelfReport(params: any) {
     `/evaluate/self/downloadReport?type=${params.type}`,
     { method: 'get' },
     {},
+  );
+}
+
+// ——————————————————————————督评模块————————————————————————
+// 是否是第一次登录
+export async function isFirstLoginSup() {
+  return request(`/evaluate/supervise/isFirstLogin`, { method: 'get' }, {});
+}
+
+// 启动督评
+export async function startEvaluationSup() {
+  return request(`/evaluate/supervise/startEvaluation`, { method: 'get' }, {});
+}
+
+// 查询督评完成情况
+export async function getCompleteIndexSup() {
+  return request(`/evaluate/supervise/getCompleteIndex`, { method: 'get' }, {});
+}
+
+// 查询已提交的督评数据
+export async function getSubmittedEvaluationSup() {
+  return request(
+    `/evaluate/supervise/getSubmittedEvaluation`,
+    { method: 'get' },
+    {},
+  );
+}
+
+// 提交督评数据
+export async function submitEvaluationSup(params: any) {
+  return request(
+    `/evaluate/supervise/submitEvaluation`,
+    { method: 'post' },
+    params.submitVos,
+  );
+}
+
+// 提交督评证据
+export async function uploadEvidenceSup(params: any) {
+  return request(
+    `/evaluate/supervise/uploadEvidence`,
+    { method: 'post' },
+    params.file,
+  );
+}
+
+// 完成督评
+export async function finishEvaluationSup(params: any) {
+  return request(
+    `/evaluate/supervise/finishEvaluation?email=${params.email}&code=${params.code}`,
+    { method: 'get' },
+    {},
+  );
+}
+
+// 导出督评数据
+export async function exportSupEvaluation(params: any) {
+  return request(`/evaluate/supervise/exportEvaluation`, { method: 'get' }, {});
+}
+
+// 导出督评证据
+export async function exportEvidenceSup(params: any) {
+  return request(`/evaluate/supervise/exportEvidence`, { method: 'get' }, {});
+}
+
+// 上传督评报告
+export async function uploadSuperviseReport(params: any) {
+  return request(
+    `/evaluate/supervise/uploadSuperviseReport`,
+    { method: 'post' },
+    params.file,
+  );
+}
+// ——————————————————————————Analysis模块————————————————————————
+// 获取下属区域中每年完成自评和督评的学校数量
+export async function finishResult() {
+  return request(`/admin/analysis/finishSituation`, { method: 'get' }, {});
+}
+
+// 区县评估进度查询
+export async function evaluateCountyProcess(params: any) {
+  return request(
+    `/admin/analysis/evaluateCountyProcess?countyCode=${params.countyCode}`,
+    { method: 'get' },
+    {},
+  );
+}
+
+// 区县内所有学校自评各项指标均分及总分均值
+export async function getCountyScore(params: any) {
+  return request(
+    `/admin/analysis/getCountyScore?countyCode=${params.countyCode}`,
+    { method: 'get' },
+    {},
+  );
+}
+
+// 区县内不同任务各学校各项指标数值及总分
+export async function getSchoolScore(params: any) {
+  return request(
+    `/admin/analysis/getSchoolScore?taskType=${params.taskType}&countyCode=${params.countyCode}`,
+    { method: 'get' },
+    {},
+  );
+}
+
+// 根据学校类型查询总分均值和各一级指标均值
+export async function getScoreBySort(params: any) {
+  return request(
+    `/admin/analysis/getScoreBySort`,
+    { method: 'post' },
+    params.scoreDTO,
   );
 }

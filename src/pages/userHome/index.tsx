@@ -21,24 +21,77 @@ import {
   MailTwoTone,
   UploadOutlined,
   DownloadOutlined,
+  CloseCircleTwoTone,
 } from '@ant-design/icons';
 import {
   getCurrentUser,
   getSchoolInfo,
   updateUserInfo,
+  getTaskTime,
+  sendEmail,
   isFirstLogin,
   startEvaluation,
-  getTaskTime,
-  schools,
-  schoolTask,
-  sendEmail,
+  getCompleteIndex,
+  uploadEvidence,
   finishEvaluation,
   downloadSelfReport,
   exportSelfEvaluation,
   exportEvidence,
+  isFirstLoginSup,
+  startEvaluationSup,
+  getCompleteIndexSup,
+  uploadEvidenceSup,
+  finishEvaluationSup,
+  exportSupEvaluation,
+  exportEvidenceSup,
 } from '@/api/api';
 
 function userHome(props: any) {
+  const [Role, setRole] = useState(0);
+  useEffect(() => {
+    const key = 'Loading...';
+    const type = localStorage.getItem('token_type');
+    if (type.split('_')[1] === 'self') {
+      setRole(1);
+      isFirstLogin().then((res: any) => {
+        if (res.statusCode === 200) {
+          if (res.data === true) {
+            setConfirmVisible(true);
+          }
+        } else {
+          message.error({ content: '获取登录信息失败' });
+        }
+      });
+      getCompleteIndex().then((res: any) => {
+        if (res.statusCode === 200) {
+          console.log(res.data);
+          setComplete(res.data);
+        } else {
+          message.error({ content: res.message });
+        }
+      });
+    } else {
+      setRole(2);
+      isFirstLoginSup().then((res: any) => {
+        if (res.statusCode === 200) {
+          if (res.data === true) {
+            setConfirmVisible(true);
+          }
+        } else {
+          message.error({ content: '获取登录信息失败' });
+        }
+      });
+      getCompleteIndexSup().then((res: any) => {
+        if (res.statusCode === 200) {
+          console.log(res.data);
+          setComplete(res.data);
+        } else {
+          message.error({ content: res.message });
+        }
+      });
+    }
+  }, []);
+
   const typeOptions = [
     {
       label: '督评',
@@ -55,100 +108,6 @@ function userHome(props: any) {
     {
       label: '省复评',
       value: '5',
-    },
-  ];
-
-  const sharedOnCell = (_, index) => {
-    if (index === 4) {
-      return { colSpan: 0 };
-    }
-  };
-
-  const columns = [
-    {
-      title: 'Name',
-      dataIndex: 'name',
-      render: (text, row, index) => <a>{text}</a>,
-      onCell: (_, index) => ({
-        // onCell设置单元格属性
-        colSpan: index < 4 ? 1 : 5, // colSpan为0时不会渲染设置的表格
-      }),
-    },
-    {
-      title: 'Age',
-      dataIndex: 'age',
-      onCell: sharedOnCell,
-    },
-    {
-      title: 'Home phone',
-      colSpan: 2, // 这个字段跨了表格同一行的2列
-      dataIndex: 'tel',
-      onCell: (_, index) => {
-        if (index === 2) {
-          return { rowSpan: 2 }; //同1列跨了2行
-        }
-        // These two are merged into above cell
-        if (index === 3) {
-          return { rowSpan: 0 };
-        }
-        if (index === 4) {
-          return { colSpan: 0 };
-        }
-      },
-    },
-    {
-      title: 'Phone',
-      colSpan: 0,
-      dataIndex: 'phone',
-      onCell: sharedOnCell,
-    },
-    {
-      title: 'Address',
-      dataIndex: 'address',
-      onCell: sharedOnCell,
-    },
-  ];
-
-  const data = [
-    {
-      key: '1',
-      name: 'John Brown',
-      age: 32,
-      tel: '0571-22098909',
-      phone: 18889898989,
-      address: 'New York No. 1 Lake Park',
-    },
-    {
-      key: '2',
-      name: 'Jim Green',
-      tel: '0571-22098333',
-      phone: 18889898888,
-      age: 42,
-      address: 'London No. 1 Lake Park',
-    },
-    {
-      key: '3',
-      name: 'Joe Black',
-      age: 32,
-      tel: '0575-22098909',
-      phone: 18900010002,
-      address: 'Sidney No. 1 Lake Park',
-    },
-    {
-      key: '4',
-      name: 'Jim Red',
-      age: 18,
-      tel: '0575-22098909',
-      phone: 18900010002,
-      address: 'London No. 2 Lake Park',
-    },
-    {
-      key: '5',
-      name: 'Jake White',
-      age: 18,
-      tel: '0575-22098909',
-      phone: 18900010002,
-      address: 'Dublin No. 2 Lake Park',
     },
   ];
 
@@ -171,44 +130,84 @@ function userHome(props: any) {
     });
   }, []);
 
-  // 首次登陆启动评估组件
+  // 首次登陆确认启动评估组件
   const [ConfirmVisible, setConfirmVisible] = useState(false);
 
-  useEffect(() => {
-    const key = 'loading...';
-    isFirstLogin().then((res: any) => {
-      if (res.statusCode === 200) {
-        if (res.data === true) {
-          setConfirmVisible(true);
-        }
-      } else {
-        message.error({ content: '获取登录信息失败', key });
-      }
-    });
-  }, []);
-
   const onConfirm = () => {
-    startEvaluation().then((res: any) => {
-      if (res.statusCode === 200) {
-        setConfirmVisible(false);
-        message.success({ content: res.message });
-        getTaskTime().then((res: any) => {
-          if (res.statusCode === 200) {
-            const start = res.data.start.split('T');
-            const end = res.data.end.split('T');
-            setTask({
-              start: start[0] + ' ' + start[1],
-              end: end[0] + ' ' + end[1],
-            });
-          } else {
-            message.error({ content: '获取任务周期失败' });
-          }
-        });
-      } else {
-        message.error({ content: res.message });
-      }
-    });
+    if (Role === 1) {
+      startEvaluation().then((res: any) => {
+        if (res.statusCode === 200) {
+          setConfirmVisible(false);
+          message.success({ content: res.message });
+          getTaskTime().then((res: any) => {
+            if (res.statusCode === 200) {
+              const start = res.data.start.split('T');
+              const end = res.data.end.split('T');
+              setTask({
+                start: start[0] + ' ' + start[1],
+                end: end[0] + ' ' + end[1],
+              });
+            } else {
+              message.error({ content: '获取任务周期失败' });
+            }
+          });
+        } else {
+          message.error({ content: res.message });
+        }
+      });
+    } else {
+      startEvaluationSup().then((res: any) => {
+        if (res.statusCode === 200) {
+          setConfirmVisible(false);
+          message.success({ content: res.message });
+          getTaskTime().then((res: any) => {
+            if (res.statusCode === 200) {
+              const start = res.data.start.split('T');
+              const end = res.data.end.split('T');
+              setTask({
+                start: start[0] + ' ' + start[1],
+                end: end[0] + ' ' + end[1],
+              });
+            } else {
+              message.error({ content: '获取任务周期失败' });
+            }
+          });
+        } else {
+          message.error({ content: res.message });
+        }
+      });
+    }
   };
+
+  // 评估完成情况
+  const sharedOnCell = (_, index) => {
+    if (index === 4) {
+      return { colSpan: 0 };
+    }
+  };
+
+  const columns = [
+    {
+      title: '一级指标',
+      dataIndex: 'index1Content',
+      key: 'index1Content',
+      align: 'center',
+    },
+    {
+      title: '二级指标',
+      dataIndex: 'index2Content',
+      key: 'index2Content',
+      align: 'center',
+    },
+    {
+      title: '是否完成',
+      dataIndex: 'isComplete',
+      key: 'isComplete',
+      align: 'center',
+    },
+  ];
+
+  const [Complete, setComplete] = useState([]);
 
   // 个人信息组件
   const [UserInfoVisible, setUserInfoVisible] = useState(false);
@@ -303,48 +302,87 @@ function userHome(props: any) {
   const onFinishEvaluation = (values: any) => {
     const key = 'Loading...';
     message.loading({ content: key, key, duration: 0 });
-    finishEvaluation({
-      code: values.code,
-      email: User.email,
-    }).then((res: any) => {
-      if (res.statusCode === 200) {
-        message.success({ content: res.message, key });
-        setExportVisible(true);
-      } else {
-        message.error({ content: res.message, key });
-      }
-    });
+    if (Role === 1) {
+      finishEvaluation({
+        code: values.code,
+        email: User.email,
+      }).then((res: any) => {
+        if (res.statusCode === 200) {
+          message.success({ content: res.message, key });
+          setExportVisible(true);
+        } else {
+          message.error({ content: res.message, key });
+        }
+      });
+    } else {
+      finishEvaluationSup({
+        code: values.code,
+        email: User.email,
+      }).then((res: any) => {
+        if (res.statusCode === 200) {
+          message.success({ content: res.message, key });
+          setExportVisible(true);
+        } else {
+          message.error({ content: res.message, key });
+        }
+      });
+    }
   };
 
   // 导出评估结果组件
   const [ExportVisible, setExportVisible] = useState(false);
 
   const onExportEvaluation = () => {
-    const key = 'Loading...';
-    message.loading({ content: key, key, duration: 0 });
-    exportSelfEvaluation({}).then((res: any) => {
-      if (res.statusCode === 200) {
-        message.success({ content: res.message, key });
-      } else {
-        message.error({ content: res.message, key });
-      }
-    });
+    if (Role === 1) {
+      const key = 'Loading...';
+      message.loading({ content: key, key, duration: 0 });
+      exportSelfEvaluation({}).then((res: any) => {
+        if (res.statusCode === 200) {
+          message.success({ content: res.message, key });
+        } else {
+          message.error({ content: res.message, key });
+        }
+      });
+    } else {
+      const key = 'Loading...';
+      message.loading({ content: key, key, duration: 0 });
+      exportSupEvaluation({}).then((res: any) => {
+        if (res.statusCode === 200) {
+          message.success({ content: res.message, key });
+        } else {
+          message.error({ content: res.message, key });
+        }
+      });
+    }
   };
 
   const onExportEvidence = () => {
-    const key = 'Loading...';
-    message.loading({ content: key, key, duration: 0 });
-    exportEvidence({}).then((res: any) => {
-      if (res.statusCode === 200) {
-        message.success({ content: res.message, key });
-      } else {
-        message.error({ content: res.message, key });
-      }
-    });
+    if (Role === 1) {
+      const key = 'Loading...';
+      message.loading({ content: key, key, duration: 0 });
+      exportEvidence({}).then((res: any) => {
+        if (res.statusCode === 200) {
+          message.success({ content: res.message, key });
+        } else {
+          message.error({ content: res.message, key });
+        }
+      });
+    } else {
+      const key = 'Loading...';
+      message.loading({ content: key, key, duration: 0 });
+      exportEvidenceSup({}).then((res: any) => {
+        if (res.statusCode === 200) {
+          message.success({ content: res.message, key });
+        } else {
+          message.error({ content: res.message, key });
+        }
+      });
+    }
   };
 
   const toLogin = () => {
     localStorage.clear();
+    message.success('成功退出系统');
     history.push('/login');
   };
 
@@ -586,6 +624,13 @@ function userHome(props: any) {
             >
               个人信息
             </Button>,
+            <Button
+              shape="round"
+              icon={<CloseCircleTwoTone />}
+              onClick={toLogin}
+            >
+              登出
+            </Button>,
           ]}
         ></PageHeader>
         <Divider />
@@ -621,8 +666,14 @@ function userHome(props: any) {
       </div>
 
       <Divider />
-      <div>
-        <Table columns={columns} dataSource={data} bordered />
+      <div className={styles.table}>
+        <Table
+          size="small"
+          pagination={false}
+          columns={columns}
+          dataSource={Complete}
+          bordered
+        />
       </div>
     </div>
   );

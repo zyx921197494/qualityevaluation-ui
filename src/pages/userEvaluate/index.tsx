@@ -18,9 +18,44 @@ import {
   getSubmittedEvaluation,
   submitEvaluation,
   uploadEvidence,
+  getSubmittedEvaluationSup,
+  submitEvaluationSup,
+  uploadEvidenceSup,
 } from '@/api/api';
 
 function userEvaluate(props: any) {
+  const [Role, setRole] = useState(0);
+  useEffect(() => {
+    const type = localStorage.getItem('token_type');
+    if (type.split('_')[1] === 'self') {
+      setRole(1);
+      getSubmittedEvaluation().then((res: any) => {
+        if (res.statusCode === 200) {
+          message.success({ content: res.message });
+          for (let item of res.data) {
+            item.key = item.index3id;
+          }
+          setdata(res.data);
+        } else {
+          message.error({ content: res.message });
+        }
+      });
+    } else {
+      setRole(2);
+      getSubmittedEvaluationSup().then((res: any) => {
+        if (res.statusCode === 200) {
+          message.success({ content: res.message });
+          for (let item of res.data) {
+            item.key = item.index3id;
+          }
+          setdata(res.data);
+        } else {
+          message.error({ content: res.message });
+        }
+      });
+    }
+  }, []);
+
   const [data, setdata] = useState([]);
 
   // 判断题选项
@@ -29,36 +64,63 @@ function userEvaluate(props: any) {
     { label: '否', value: 'B' },
   ];
 
-  useEffect(() => {
-    const key = 'loading...';
-    message.loading({ content: key, key, duration: 0 });
-    getSubmittedEvaluation().then((res: any) => {
-      if (res.statusCode === 200) {
-        message.success({ content: res.message, key });
-        for (let item of res.data) {
-          item.key = item.index3id;
-        }
-        setdata(res.data);
-      } else {
-        message.error({ content: res.message, key });
-      }
-    });
-  }, []);
+  // useEffect(() => {
+  //   const key = 'loading...';
+  //   message.loading({ content: key, key, duration: 0 });
+  //   if (Role === 1) {
+  //     getSubmittedEvaluation().then((res: any) => {
+  //       if (res.statusCode === 200) {
+  //         message.success({ content: res.message, key });
+  //         for (let item of res.data) {
+  //           item.key = item.index3id;
+  //         }
+  //         setdata(res.data);
+  //       } else {
+  //         message.error({ content: res.message, key });
+  //       }
+  //     });
+  //   } else {
+  //     getSubmittedEvaluationSup().then((res: any) => {
+  //       if (res.statusCode === 200) {
+  //         message.success({ content: res.message, key });
+  //         for (let item of res.data) {
+  //           item.key = item.index3id;
+  //         }
+  //         setdata(res.data);
+  //       } else {
+  //         message.error({ content: res.message, key });
+  //       }
+  //     });
+  //   }
+  // }, []);
 
   // 上传证据文件
   const upload = () => {
     const key = 'loading...';
     message.loading({ content: key, key, duration: 0 });
-    uploadEvidence({}).then((res: any) => {
-      if (res.statusCode === 200) {
-        message.success({ content: res.message, key });
-        for (let item of res.data) {
-          item.key = item.index3id;
+    if (Role === 1) {
+      uploadEvidence({}).then((res: any) => {
+        if (res.statusCode === 200) {
+          message.success({ content: res.message, key });
+          for (let item of res.data) {
+            item.key = item.index3id;
+          }
+        } else {
+          message.error({ content: res.message, key });
         }
-      } else {
-        message.error({ content: res.message, key });
-      }
-    });
+      });
+    } else {
+      uploadEvidenceSup({}).then((res: any) => {
+        if (res.statusCode === 200) {
+          message.success({ content: res.message, key });
+          for (let item of res.data) {
+            item.key = item.index3id;
+          }
+        } else {
+          message.error({ content: res.message, key });
+        }
+      });
+    }
   };
 
   // 提交评估
@@ -80,15 +142,27 @@ function userEvaluate(props: any) {
     }
     console.log(param);
     message.loading({ content: key, key, duration: 0 });
-    submitEvaluation({
-      submitVos: param,
-    }).then((res: any) => {
-      if (res.statusCode === 200) {
-        message.success({ content: res.message, key });
-      } else {
-        message.error({ content: res.message, key });
-      }
-    });
+    if (Role === 1) {
+      submitEvaluation({
+        submitVos: param,
+      }).then((res: any) => {
+        if (res.statusCode === 200) {
+          message.success({ content: res.message, key });
+        } else {
+          message.error({ content: res.message, key });
+        }
+      });
+    } else {
+      submitEvaluationSup({
+        submitVos: param,
+      }).then((res: any) => {
+        if (res.statusCode === 200) {
+          message.success({ content: res.message, key });
+        } else {
+          message.error({ content: res.message, key });
+        }
+      });
+    }
   };
 
   const onValuesChange = (a, b) => {
