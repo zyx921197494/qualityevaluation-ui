@@ -444,6 +444,7 @@ function evaluationData() {
         footer={null}
         width={800}
         closable={false}
+        keyboard={true}
       >
         <Form.Item className={styles.save}>
           <Button onClick={handleCancel}>关闭</Button>

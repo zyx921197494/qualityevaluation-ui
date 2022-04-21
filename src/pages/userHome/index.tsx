@@ -401,6 +401,31 @@ function userHome(props: any) {
     });
   };
 
+  const key = 'loading...';
+  // 上传自评/督评报告
+  const upload = {
+    name: 'file',
+    multiple: false,
+    accept: '.doc, .docx, .md, ,pdf, .txt',
+    action:
+      Role === 1
+        ? 'http://localhost:8080/evaluate/self/uploadSelfReport'
+        : 'http://localhost:8080/evaluate/supervise/uploadSuperviseReport', // 接口url
+    maxCount: 1,
+    headers: {
+      Authorization: 'Bearer ' + localStorage.getItem('token'),
+    },
+    onChange(info: any) {
+      message.loading({ content: key, key });
+      const { status } = info.file;
+      if (status === 'done') {
+        message.success({ content: `${info.file.name} 上传成功`, key });
+      } else if (status === 'error') {
+        message.error({ content: `${info.file.name} 上传失败`, key });
+      }
+    },
+  };
+
   return (
     <div>
       <Modal
@@ -559,7 +584,7 @@ function userHome(props: any) {
         <div>
           <Form>
             <Form.Item label="报告：" className={styles.upload}>
-              <Upload {...props}>
+              <Upload {...upload}>
                 <Button icon={<UploadOutlined />}>点击上传</Button>
               </Upload>
             </Form.Item>

@@ -13,14 +13,11 @@ import {
   BackTop,
 } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
-import { data } from 'browserslist';
 import {
   getSubmittedEvaluation,
   submitEvaluation,
-  uploadEvidence,
   getSubmittedEvaluationSup,
   submitEvaluationSup,
-  uploadEvidenceSup,
 } from '@/api/api';
 
 function userEvaluate(props: any) {
@@ -64,63 +61,29 @@ function userEvaluate(props: any) {
     { label: '否', value: 'B' },
   ];
 
-  // useEffect(() => {
-  //   const key = 'loading...';
-  //   message.loading({ content: key, key, duration: 0 });
-  //   if (Role === 1) {
-  //     getSubmittedEvaluation().then((res: any) => {
-  //       if (res.statusCode === 200) {
-  //         message.success({ content: res.message, key });
-  //         for (let item of res.data) {
-  //           item.key = item.index3id;
-  //         }
-  //         setdata(res.data);
-  //       } else {
-  //         message.error({ content: res.message, key });
-  //       }
-  //     });
-  //   } else {
-  //     getSubmittedEvaluationSup().then((res: any) => {
-  //       if (res.statusCode === 200) {
-  //         message.success({ content: res.message, key });
-  //         for (let item of res.data) {
-  //           item.key = item.index3id;
-  //         }
-  //         setdata(res.data);
-  //       } else {
-  //         message.error({ content: res.message, key });
-  //       }
-  //     });
-  //   }
-  // }, []);
-
+  const key = 'loading...';
   // 上传证据文件
-  const upload = () => {
-    const key = 'loading...';
-    message.loading({ content: key, key, duration: 0 });
-    if (Role === 1) {
-      uploadEvidence({}).then((res: any) => {
-        if (res.statusCode === 200) {
-          message.success({ content: res.message, key });
-          for (let item of res.data) {
-            item.key = item.index3id;
-          }
-        } else {
-          message.error({ content: res.message, key });
-        }
-      });
-    } else {
-      uploadEvidenceSup({}).then((res: any) => {
-        if (res.statusCode === 200) {
-          message.success({ content: res.message, key });
-          for (let item of res.data) {
-            item.key = item.index3id;
-          }
-        } else {
-          message.error({ content: res.message, key });
-        }
-      });
-    }
+  const upload = {
+    name: 'file',
+    multiple: false,
+    accept: '.png, .jpg, .jpeg, .docx, .doc, .txt, .pdf, .md, .mp3, .mp4',
+    action:
+      Role === 1
+        ? 'http://localhost:8080/evaluate/self/uploadEvidence'
+        : 'http://localhost:8080/evaluate/supervise/uploadEvidence', // 接口url
+    maxCount: 1,
+    headers: {
+      Authorization: 'Bearer ' + localStorage.getItem('token'),
+    },
+    onChange(info: any) {
+      message.loading({ content: key, key });
+      const { status } = info.file;
+      if (status === 'done') {
+        message.success({ content: `${info.file.name} 上传成功`, key });
+      } else if (status === 'error') {
+        message.error({ content: `${info.file.name} 上传失败`, key });
+      }
+    },
   };
 
   // 提交评估
@@ -165,11 +128,6 @@ function userEvaluate(props: any) {
     }
   };
 
-  const onValuesChange = (a, b) => {
-    console.log(a);
-    console.log(b);
-  };
-
   return (
     <div>
       <div className={styles.header}>
@@ -184,7 +142,7 @@ function userEvaluate(props: any) {
 
       <div className={styles.page}>
         <BackTop />
-        <Form onFinish={onFinish} onValuesChange={onValuesChange}>
+        <Form onFinish={onFinish}>
           {data.map((data, index) => {
             return (
               <div key={index}>
@@ -271,14 +229,8 @@ function userEvaluate(props: any) {
 
                 {/* <div className={styles.evidence}> */}
                 <Form.Item className={styles.evidence}>
-                  <Upload>
-                    <Button
-                      htmlType="submit"
-                      icon={<UploadOutlined />}
-                      onClick={upload}
-                    >
-                      上传证据文件
-                    </Button>
+                  <Upload {...upload}>
+                    <Button icon={<UploadOutlined />}>上传证据文件 </Button>
                   </Upload>
                 </Form.Item>
                 {/* </div> */}

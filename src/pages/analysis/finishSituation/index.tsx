@@ -25,9 +25,21 @@ function finishSituation(props: any) {
     xField: 'x',
     yField: 'y',
     seriesField: 'name',
-    // legend:{
-    //   title:"评估完成情况"
-    // },
+    legend: {
+      title: {
+        title: '自评报告已提交和督评报告审核通过数量',
+        spacing: 10,
+      },
+      itemName: {
+        formatter: (text: string, item: ListItem, index: number) => {
+          if (text === '自评') {
+            return '自评(报告已提交)';
+          } else {
+            return '自评(报告审核已通过)';
+          }
+        },
+      },
+    },
 
     marginRatio: 0.1,
     label: {

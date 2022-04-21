@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import styles from './index.less';
 import {
   listLocationReport,
-  uploadLocationReport,
   downloadLocationReport,
   deleteLocationReport,
 } from '@/api/api';
@@ -38,7 +37,7 @@ function locationReport(props: any) {
       dataIndex: 'option',
     },
   ];
-
+  const [Year, setYear] = useState(0);
   // 按年份查询报告
   const [Report, setReport] = useState([]);
   const onFinish = (values: any) => {
@@ -61,15 +60,32 @@ function locationReport(props: any) {
     });
   };
 
+  const key = 'Loading';
   // 上传报告
-
-  const [file, setFile] = useState(null);
-  const onUpload = () => {};
+  const uploadFile = {
+    name: 'file',
+    multiple: false,
+    action: `http://localhost:8080/admin/uploadLocationReport?year=${Year}`, // 接口url
+    maxCount: 1,
+    disabled: Year ? false : true,
+    headers: {
+      Authorization: 'Bearer ' + localStorage.getItem('token'),
+    },
+    onChange(info: any) {
+      message.loading({ content: key, key });
+      const { status } = info.file;
+      if (status === 'done') {
+        message.success({ content: `${info.file.name} 上传成功`, key });
+      } else if (status === 'error') {
+        message.error({ content: `${info.file.name} 上传失败`, key });
+      }
+    },
+  };
 
   // 下载报告
   const onDownload = () => {
     const key = 'Loading';
-    message.loading({ content: '正在下载..', key, duration: 0 });
+    message.loading({ content: '正在下载...', key, duration: 0 });
     downloadLocationReport({
       ids: selectedRowKeys,
     }).then((res: any) => {
@@ -94,27 +110,6 @@ function locationReport(props: any) {
         message.error({ content: res.message, key });
       }
     });
-  };
-
-  const uploadFile = {
-    name: 'file',
-    multiple: false,
-    action: '', // 上传接口url
-    maxCount: 1,
-    onChange(info) {
-      const { status } = info.file;
-      if (status !== 'uploading') {
-        // console.log(info.file, info.fileList);
-      }
-      if (status === 'done') {
-        +message.success(`${info.file.name} file uploaded successfully.`);
-      } else if (status === 'error') {
-        message.error(`${info.file.name} file upload failed.`);
-      }
-    },
-    onDrop(e) {
-      // console.log('Dropped files', e.dataTransfer.files);
-    },
   };
 
   // table组件
@@ -146,13 +141,13 @@ function locationReport(props: any) {
               placeholder="请选择报告年份"
               allowClear
             >
-              <Option key="2020" value="2020">
+              <Option key="2020" value={2020}>
                 2020
               </Option>
-              <Option key="2021" value="2021">
+              <Option key="2021" value={2021}>
                 2021
               </Option>
-              <Option key="2022" value="2022">
+              <Option key="2022" value={2022}>
                 2022
               </Option>
             </Select>
@@ -174,9 +169,15 @@ function locationReport(props: any) {
       <Divider orientation="left">上传区域报告</Divider>
 
       <div className={styles.area}>
-        <Form layout="inline" onFinish={onUpload}>
+        <Form layout="inline">
           <Form.Item name="year">
-            <Select className={styles.select} placeholder="请选择上传年份">
+            <Select
+              className={styles.select}
+              placeholder="请选择上传年份"
+              onChange={(e) => {
+                setYear(e);
+              }}
+            >
               <Option key="2020" value="2020">
                 2020
               </Option>
@@ -193,16 +194,22 @@ function locationReport(props: any) {
           </Form.Item>
 
           <Form.Item>
-            <Upload {...props}>
-              <Button className={styles.bigBtn} icon={<UploadOutlined />}>
+            <Upload {...uploadFile}>
+              <Button
+                className={styles.bigBtn}
+                icon={<UploadOutlined />}
+                onClick={() =>
+                  Year
+                    ? {}
+                    : message.warning({
+                        content: '请先选择上传年份',
+                        key: 'upload',
+                      })
+                }
+              >
                 上传文件
               </Button>
             </Upload>
-          </Form.Item>
-          <Form.Item>
-            <Button className={styles.btn} type={'primary'}>
-              上传
-            </Button>
           </Form.Item>
         </Form>
       </div>

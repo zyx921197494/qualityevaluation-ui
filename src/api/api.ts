@@ -1,17 +1,17 @@
 import request from '../utils/request';
-import fileRequest from '../utils/fileRequest';
 
+// ———————————————————————————通用模块———————————————————————————
 //登录
 export async function login(params: any) {
   return request('/auth/login', { method: 'post' }, params);
 }
 
-//生成在册园账号
-export async function createRegisterUsers(params: any) {
-  return fileRequest(
-    '/admin/createRegisterUsers',
-    { method: 'post' },
-    params.file,
+// 下载
+export async function download(params: any) {
+  return request(
+    `/universal/download?path=${params.path}`,
+    { method: 'POST' },
+    params.filenames,
   );
 }
 
@@ -110,15 +110,6 @@ export async function auditReport(params: any) {
 export async function listLocationReport(params: any) {
   return request(
     `/admin/listLocationReport?year=${params.year}`,
-    { method: 'get' },
-    {},
-  );
-}
-
-// 管理员上传本地区某一年的区域报告
-export async function uploadLocationReport(params: any) {
-  return request(
-    `/admin/uploadLocationReport?year=${params.year}&file=${params.file}`,
     { method: 'get' },
     {},
   );
@@ -279,15 +270,6 @@ export async function exportEvidence(params: any) {
   return request(`/evaluate/self/exportEvidence`, { method: 'get' }, {});
 }
 
-// 上传自评报告
-export async function uploadSelfReport(params: any) {
-  return request(
-    `/evaluate/self/uploadSelfReport`,
-    { method: 'post' },
-    params.file,
-  );
-}
-
 // 下载督评/复评报告
 export async function downloadSelfReport(params: any) {
   return request(
@@ -359,14 +341,6 @@ export async function exportEvidenceSup(params: any) {
   return request(`/evaluate/supervise/exportEvidence`, { method: 'get' }, {});
 }
 
-// 上传督评报告
-export async function uploadSuperviseReport(params: any) {
-  return request(
-    `/evaluate/supervise/uploadSuperviseReport`,
-    { method: 'post' },
-    params.file,
-  );
-}
 // ——————————————————————————Analysis模块————————————————————————
 // 获取下属区域中每年完成自评和督评的学校数量
 export async function finishResult() {
