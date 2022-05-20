@@ -26,7 +26,7 @@ const NormalLoginForm = (props: any) => {
         localStorage.setItem('token_type', res.data.token_type);
         userType = res.data.token_type;
         if (res.data.token_type === 'admin') {
-          history.push('/');
+          history.push('/admin');
         } else {
           history.push('/user/userhome');
         }

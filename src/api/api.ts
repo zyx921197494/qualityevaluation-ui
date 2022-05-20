@@ -1,6 +1,51 @@
 import request from '../utils/request';
 
 // ———————————————————————————通用模块———————————————————————————
+
+export async function getIndex1(params: any) {
+  return request(`/admin/getIndex1/${params.indexId}`, { method: 'get' }, {});
+}
+
+export async function getIndex2(params: any) {
+  return request(`/admin/getIndex2/${params.index1Id}`, { method: 'get' }, {});
+}
+
+export async function getIndex3(params: any) {
+  return request(`/admin/getIndex3/${params.index2Id}`, { method: 'get' }, {});
+}
+
+export async function newIndex(params: any) {
+  return request(
+    `/admin/newIndex?name=${params.name}&memo=${params.memo}`,
+    { method: 'get' },
+    {},
+  );
+}
+
+export async function newIndex1(params: any) {
+  return request(
+    `/admin/newIndex1?indexId=${params.indexId}`,
+    { method: 'post' },
+    params.list,
+  );
+}
+
+export async function newIndex2(params: any) {
+  return request(
+    `/admin/newIndex2?index1Id=${params.index1Id}`,
+    { method: 'post' },
+    params.list,
+  );
+}
+
+export async function newIndex3(params: any) {
+  return request(
+    `/admin/newIndex3?index2Id=${params.index2Id}`,
+    { method: 'post' },
+    params.list,
+  );
+}
+
 //登录
 export async function login(params: any) {
   return request('/auth/login', { method: 'post' }, params);

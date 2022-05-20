@@ -32,10 +32,6 @@ function locationReport(props: any) {
       title: '上传日期',
       dataIndex: 'uploadTime',
     },
-    {
-      title: '操作',
-      dataIndex: 'option',
-    },
   ];
   const [Year, setYear] = useState(0);
   // 按年份查询报告

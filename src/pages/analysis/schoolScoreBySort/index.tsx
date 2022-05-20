@@ -231,6 +231,10 @@ function schoolScoreBySort(props: any) {
       message.warning('请选择任务类型');
       return;
     }
+    if (values.sort === undefined) {
+      message.warning('请选择分类');
+      return;
+    }
     getScoreBySort({
       scoreDTO: {
         locationCode: values.countyCode[values.countyCode.length - 1],

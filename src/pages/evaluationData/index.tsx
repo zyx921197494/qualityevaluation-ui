@@ -649,11 +649,11 @@ function evaluationData() {
           </Form.Item>
 
           <Form.Item name="keyName">
-            <Input className={styles.input} placeholder="请输入幼儿园名称" />
+            <Input className={styles.input} placeholder="请输入学校名称" />
           </Form.Item>
 
           <Form.Item name="schoolCode">
-            <Input className={styles.input} placeholder="请输入幼儿园标识码" />
+            <Input className={styles.input} placeholder="请输入学校标识码" />
           </Form.Item>
 
           <Form.Item>

@@ -5,19 +5,27 @@ import { changeAdminPassword } from '@/api/api';
 import { Button, Input, Form, message } from 'antd';
 
 function ChangeAdminPassword(props) {
+  const key = 'loading';
   const onFinish = (values: any) => {
-    console.log(values);
-    if (values.newPwd != values.comfirmPwd) {
-      message.warning('两次输入的新密码不一致！');
+    if (
+      values.newPwd === '' ||
+      values.newPwd === undefined ||
+      values.comfirmPwd === '' ||
+      values.comfirmPwd === undefined
+    ) {
+      message.warning({ content: '密码不能为空', key });
       return;
     }
-    const key = 'loading';
+    if (values.newPwd != values.comfirmPwd) {
+      message.warning({ content: '两次输入的新密码不一致！', key });
+      return;
+    }
     changeAdminPassword({
       newPwd: [values.newPwd],
     }).then((res: any) => {
       if (res.statusCode === 200) {
         message.success({ content: res.message + '，请重新登陆', key });
-        history.push('/login');
+        history.push('/');
       } else {
         message.error({ content: res.message, key });
       }

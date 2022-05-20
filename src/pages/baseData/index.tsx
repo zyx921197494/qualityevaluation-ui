@@ -48,7 +48,7 @@ function BaseData() {
       dataIndex: 'locationCode',
     },
     {
-      title: '幼儿园名称',
+      title: '学校名称',
       dataIndex: 'name',
     },
     {
@@ -120,15 +120,19 @@ function BaseData() {
   };
 
   const onChangeFormFinish = (values: any) => {
-    if (!hasSelected) {
-      message.warning({ content: '请至少选择一所学校' });
-      return;
-    }
-    if (values.targetLocationCode[2] === undefined) {
-      message.warning({ content: '请选择要转入的区县' });
-      return;
-    }
     const key = 'updatable';
+    if (!hasSelected) {
+      message.warning({ content: '请至少选择一所学校', key });
+      return;
+    }
+    if (
+      values.targetLocationCode === undefined ||
+      values.targetLocationCode[1] === undefined ||
+      values.targetLocationCode[2] === undefined
+    ) {
+      message.warning({ content: '请选择要转入的区县', key });
+      return;
+    }
     message.loading({ content: 'Loading...', key, duration: 0 });
     changeSchoolLocation({
       locationCode: values.targetLocationCode[2],
@@ -354,7 +358,7 @@ function BaseData() {
     updateSchool({
       code: values.code,
       name: values.name,
-      location: values.lovation,
+      location: values.location,
       locationTypeCode: values.locationTypeCode,
       typeCode: values.typeCode,
       hostCode: values.hostCode,
@@ -612,11 +616,11 @@ function BaseData() {
           </Form.Item>
 
           <Form.Item name="keyName">
-            <Input className={styles.input} placeholder="幼儿园名称/关键字" />
+            <Input className={styles.input} placeholder="学校名称/关键字" />
           </Form.Item>
 
           <Form.Item name="schoolCode">
-            <Input className={styles.input} placeholder="幼儿园标识码" />
+            <Input className={styles.input} placeholder="学校标识码" />
           </Form.Item>
 
           <Form.Item>
@@ -639,7 +643,7 @@ function BaseData() {
         <Form layout="inline" onFinish={onChangeFormFinish}>
           <Form.Item name="targetLocationCode">
             <Cascader
-              className={styles.select}
+              className={styles.selectLong}
               options={options}
               loadData={loadData}
               onChange={onListChange}

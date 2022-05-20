@@ -35,7 +35,7 @@ function finishSituation(props: any) {
           if (text === '自评') {
             return '自评(报告已提交)';
           } else {
-            return '自评(报告审核已通过)';
+            return '督评(报告审核已通过)';
           }
         },
       },

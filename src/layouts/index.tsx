@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Layout, Menu } from 'antd';
-import { withRouter, Switch, history } from 'umi';
+import { Layout, Menu, Button, message } from 'antd';
+import { Switch, history } from 'umi';
 import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
@@ -20,19 +20,25 @@ const { Header, Sider, Content } = Layout;
 const { SubMenu } = Menu;
 
 function layoutWrap({ children, location }: any) {
+  const toLogin = () => {
+    localStorage.clear();
+    message.success('成功退出系统');
+    history.push('/');
+  };
+
   const menuData = [
     {
-      key: '/account',
+      key: '/admin/account',
       icon: <TeamOutlined />,
       title: '评估账号管理',
       children: [
         {
           key: '/createAccount',
-          title: '生成在册园账号',
+          title: '生成评估账号',
         },
         {
           key: '/exportAccount',
-          title: '导出与删除账号',
+          title: '导出账号',
         },
         {
           key: '/resetEvaluation',
@@ -41,18 +47,22 @@ function layoutWrap({ children, location }: any) {
       ],
     },
     {
-      key: '/data',
+      key: '/admin/data',
       icon: <DatabaseOutlined />,
       title: '基础数据',
       children: [
         {
           key: '/baseData',
-          title: '幼儿园信息管理',
+          title: '学校信息管理',
+        },
+        {
+          key: '/evaluationIndex',
+          title: '评估指标管理',
         },
       ],
     },
     {
-      key: '/evaluation',
+      key: '/admin/evaluation',
       icon: <FileTextFilled />,
       title: '评估数据管理',
       children: [
@@ -63,9 +73,9 @@ function layoutWrap({ children, location }: any) {
       ],
     },
     {
-      key: '/analysis',
+      key: '/admin/analysis',
       icon: <LineChartOutlined />,
-      title: '评估数据检测与分析',
+      title: '评估数据分析',
       children: [
         {
           key: '/finishSituation',
@@ -73,7 +83,7 @@ function layoutWrap({ children, location }: any) {
         },
         {
           key: '/evaluateProcess',
-          title: '区县评估进度查询',
+          title: '区县评估进度',
         },
         {
           key: '/schoolScore',
@@ -81,23 +91,23 @@ function layoutWrap({ children, location }: any) {
         },
         {
           key: '/schoolScoreBySort',
-          title: '分类查询得分',
+          title: '分类统计得分',
         },
       ],
     },
     {
-      key: '/report',
+      key: '/admin/report',
       icon: <SnippetsOutlined />,
       title: '区域报告',
       children: [
         {
           key: '/locationReport',
-          title: '区域报告',
+          title: '区域报告管理',
         },
       ],
     },
     {
-      key: '/system',
+      key: '/admin/system',
       icon: <ApartmentOutlined />,
       title: '系统信息管理',
       children: [
@@ -107,12 +117,12 @@ function layoutWrap({ children, location }: any) {
         },
         {
           key: '/changeSchoolPassword',
-          title: '更换幼儿园密码',
+          title: '更换学校密码',
         },
       ],
     },
     {
-      key: '/cycle',
+      key: '/admin/cycle',
       icon: <ScheduleOutlined />,
       title: '周期管理',
       children: [
@@ -129,7 +139,7 @@ function layoutWrap({ children, location }: any) {
   const toggle = () => {
     setcollapsed(!collapsed);
   };
-  const handleClick = (e) => {
+  const handleClick = (e: { keyPath: any[]; key: any }) => {
     history.push({
       pathname: e.keyPath[1] + e.key,
     });
@@ -183,7 +193,9 @@ function layoutWrap({ children, location }: any) {
           <span style={{ fontSize: 22 }}>中小学办学质量在线监测及评估系统</span>
           <span>
             <LogoutOutlined style={{ marginRight: 10 }} />
-            退出
+            <Button type="primary" size="large" onClick={toLogin}>
+              退出
+            </Button>
           </span>
         </Header>
         <Content

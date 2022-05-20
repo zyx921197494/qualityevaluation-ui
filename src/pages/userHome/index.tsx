@@ -301,6 +301,14 @@ function userHome(props: any) {
   // 完成自评
   const onFinishEvaluation = (values: any) => {
     const key = 'Loading...';
+    if (values.code === '' || values.code === undefined) {
+      message.warning({ content: '验证码不能为空', key });
+      return;
+    }
+    if (values.code.length !== 6) {
+      message.warning({ content: '验证码长度为6位', key });
+      return;
+    }
     message.loading({ content: key, key, duration: 0 });
     if (Role === 1) {
       finishEvaluation({
@@ -383,7 +391,7 @@ function userHome(props: any) {
   const toLogin = () => {
     localStorage.clear();
     message.success('成功退出系统');
-    history.push('/login');
+    history.push('/');
   };
 
   // 下载意见书
@@ -528,7 +536,7 @@ function userHome(props: any) {
         <Form preserve={false} onFinish={onFinishEvaluation}>
           <div className={styles.area}>
             <Form.Item name="code" className={styles.verifyCode}>
-              <Input />
+              <Input placeholder="填写验证码" />
             </Form.Item>
             <Form.Item className={styles.save}>
               <Button shape="round" icon={<MailTwoTone />} onClick={seneEmail}>
@@ -591,7 +599,7 @@ function userHome(props: any) {
           </Form>
         </div>
 
-        <Form onFinish={onDownloadReport}>
+        {/* <Form onFinish={onDownloadReport}>
           <div className={styles.area}>
             <Form.Item className={styles.select} label="意见书：" name="type">
               <Select
@@ -610,7 +618,7 @@ function userHome(props: any) {
               </Button>
             </Form.Item>
           </div>
-        </Form>
+        </Form> */}
 
         <div className={styles.exit}>
           <Button type="primary" danger={true} onClick={toLogin}>
@@ -639,7 +647,7 @@ function userHome(props: any) {
               icon={<EditTwoTone />}
               onClick={onSchoolInfo}
             >
-              园所信息
+              学校信息
             </Button>,
             <Button
               shape="round"
@@ -680,7 +688,9 @@ function userHome(props: any) {
             shape="round"
             htmlType="submit"
             disabled={
-              localStorage.getItem('token_type') === 'leader' ? false : true
+              localStorage.getItem('token_type')?.split('_')[2] === 'leader'
+                ? false
+                : true
             }
             icon={<CheckCircleTwoTone />}
             onClick={() => setFinishVisible(true)}
